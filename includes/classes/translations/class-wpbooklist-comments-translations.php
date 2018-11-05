@@ -29,7 +29,7 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 		 * All the Translations.
 		 */
 		public function trans_strings() {
-			$this->trans_1 = __( 'Search', 'wpbooklist-textdomain' );
+			$this->trans_1 = __( 'Here you can Approve, Deny, and Edit Comments, as well as view older Archived Comments.', 'wpbooklist-textdomain' );
 
 			// The array of translation strings.
 			$translation_array = array(

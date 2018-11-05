@@ -184,7 +184,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_comments_register_table_name() {
 			global $wpdb;
-			//$wpdb->wpbooklist_jre_saved_book_log = "{$wpdb->prefix}wpbooklist_jre_saved_book_log";
+			$wpdb->wpbooklist_comments = "{$wpdb->prefix}wpbooklist_comments";
 		}
 
 		/**
@@ -204,27 +204,26 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 			global $wpdb;
 			global $charset_collate;
 
-			/*
+			
 			// Call this manually as we may have missed the init hook.
 			$this->wpbooklist_comments_register_table_name();
 
 			$sql_create_table1 = "CREATE TABLE {$wpdb->wpbooklist_comments}
 			(
 				ID bigint(190) auto_increment,
-				getstories bigint(255),
-				createpost bigint(255),
-				createpage bigint(255),
-				storypersist bigint(255),
-				deletedefault bigint(255),
-				notifydismiss bigint(255) NOT NULL DEFAULT 1,
-				newnotify bigint(255) NOT NULL DEFAULT 1,
-				notifymessage MEDIUMTEXT,
-				storytimestylepak varchar(255) NOT NULL DEFAULT 'default',
+				bookuid varchar(255),
+				library varchar(255),
+				rating bigint(255),
+				datesubmitted varchar(255),
+				dateapproved varchar(255),
+				submitter bigint(255),
+				status varchar(255),
+				comment MEDIUMTEXT,
 				PRIMARY KEY  (ID),
-				KEY getstories (getstories)
+				KEY bookuid (bookuid)
 			) $charset_collate; ";
 			dbDelta( $sql_create_table1 );
-			*/
+		
 		}
 
 	}
