@@ -2,13 +2,13 @@
 /**
  * WordPress Book List Comments Extension
  *
- * @package     WordPress Book List Reviews & COMMENTS Extension
+ * @package     WordPress Book List Comments Extension
  * @author      Jake Evans
  * @copyright   2018 Jake Evans
  * @license     GPL-2.0+
  *
  * @wordpress-plugin
- * Plugin Name: WPBookList Reviews & COMMENTS Extension
+ * Plugin Name: WPBookList Comments Extension
  * Plugin URI: https://www.jakerevans.com
  * Description: A WPBookList Extension that allows your visitors to leave Ratings and COMMENTS on your WPBookList Books!
  * Version: 6.0.0

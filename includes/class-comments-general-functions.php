@@ -24,7 +24,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_comments_submenu( $submenu_array ) {
 			$extra_submenu = array(
-				'ReviewsCOMMENTS',
+				'Comments',
 			);
 
 			// Combine the two arrays.
