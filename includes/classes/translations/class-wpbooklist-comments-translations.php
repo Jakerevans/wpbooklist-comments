@@ -58,6 +58,16 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_27 = __( 'Comments Older Than 120 Days', 'wpbooklist-textdomain' );
 			$this->trans_28 = __( 'All Archived Comments', 'wpbooklist-textdomain' );
 			$this->trans_29 = __( 'Submit', 'wpbooklist-textdomain' );
+			$this->trans_30 = __( 'Ratings & Comments', 'wpbooklist-textdomain' );
+			$this->trans_31 = __( 'This title hasn\'t been rated yet!', 'wpbooklist-textdomain' );
+			$this->trans_32 = __( 'Comments', 'wpbooklist-textdomain' );
+			$this->trans_33 = __( 'Average Rating', 'wpbooklist-textdomain' );
+			$this->trans_34 = __( 'Stars', 'wpbooklist-textdomain' );
+			$this->trans_35 = __( 'By', 'wpbooklist-textdomain' );
+			$this->trans_36 = __( 'Likes', 'wpbooklist-textdomain' );
+
+
+
 
 			// The array of translation strings.
 			$translation_array = array(

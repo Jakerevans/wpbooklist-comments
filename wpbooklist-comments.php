@@ -67,6 +67,15 @@ global $wpdb;
 	// Root WordPress Plugin Directory.
 	define( 'COMMENTS_ROOT_WP_PLUGINS_DIR', str_replace( '/wpbooklist-comments', '', plugin_dir_path( __FILE__ ) ) );
 
+	// Root WPBL Dir.
+	define( 'ROOT_WPBL_DIR', COMMENTS_ROOT_WP_PLUGINS_DIR . 'wpbooklist/' );
+
+	// Root WPBL Classes Dir.
+	define( 'ROOT_WPBL_CLASSES_DIR', ROOT_WPBL_DIR . 'includes/classes/' );
+
+	// Root WPBL Transients Dir.
+	define( 'ROOT_WPBL_TRANSIENTS_DIR', ROOT_WPBL_CLASSES_DIR . 'transients/' );
+
 	// Root plugin folder URL .
 	define( 'COMMENTS_ROOT_URL', plugins_url() . '/wpbooklist-comments/' );
 
@@ -174,6 +183,9 @@ global $wpdb;
 
 	// Runs once upon extension activation and adds it's version number to the 'extensionversions' column in the 'wpbooklist_jre_user_options' table of the core plugin.
 	register_activation_hook( __FILE__, array( $comments_general_functions, 'wpbooklist_comments_record_extension_version' ) );
+
+	// The function that outputs the actual comment and rating HTML.
+	add_filter( 'wpbooklist_append_to_colorbox_comments', array( $comments_general_functions, 'wpbooklist_append_to_colorbox_comments_func' ) );
 
 
 

@@ -18,6 +18,23 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 	 */
 	class Comments_General_Functions {
 
+		/**
+		 *  Class Constructor.
+		 */
+		public function __construct( ) {
+
+			// Get Translations.
+			require_once COMMENTS_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-comments-translations.php';
+			$this->trans = new WPBookList_Comments_Translations();
+			$this->trans->trans_strings();
+
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
+
+		}
+
+
 		/** Functions that loads up the menu page entry for this Extension.
 		 *
 		 *  @param array $submenu_array - The array that contains submenu entries to add to.
@@ -204,7 +221,6 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 			global $wpdb;
 			global $charset_collate;
 
-			
 			// Call this manually as we may have missed the init hook.
 			$this->wpbooklist_comments_register_table_name();
 
@@ -212,8 +228,11 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 			(
 				ID bigint(190) auto_increment,
 				bookuid varchar(255),
+				bookid bigint(255),
+				likes bigint(255),
+				booktitle varchar(255),
 				library varchar(255),
-				rating bigint(255),
+				rating FLOAT,
 				datesubmitted varchar(255),
 				dateapproved varchar(255),
 				submitter bigint(255),
@@ -223,7 +242,201 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				KEY bookuid (bookuid)
 			) $charset_collate; ";
 			dbDelta( $sql_create_table1 );
-		
+		}
+
+		/**  The function that outputs the actual comment and rating HTML.
+		 *
+		 *  @param array $comments_array - The array that contains the book info.
+		 */
+		public function wpbooklist_append_to_colorbox_comments_func( $comments_array ) {
+
+			global $wpdb;
+			$comments_table = $wpdb->prefix . 'wpbooklist_comments';
+
+			$transient_name   = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $comments_array[2] );
+			$transient_exists = $this->transients->existing_transient_check( $transient_name );
+			if ( $transient_exists ) {
+				$all_comments = $transient_exists;
+			} else {
+				$query = $wpdb->prepare( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = %s', $comments_array[2] );
+				$all_comments = $this->transients->create_transient( $transient_name, 'wpdb->get_results', $query, MONTH_IN_SECONDS );
+			}
+
+			// Now loop through all returned comments and build final HTML.
+			$final_html     = '';
+			$opening_html   = '';
+			$comments_html  = '';
+			$ratings_total  = 0;
+			$ratings_count  = 0;
+			$average_rating = null;
+			if ( 0 !== count( $all_comments ) ) {
+
+				// The opening HTML.
+				$opening_html = '
+					<div id="wpbooklist_desc_id">
+						<p class="wpbooklist_description_p" id="wpbooklist-desc-title-id">' . $this->trans->trans_30 . '</p>
+					</div>
+					<div class="wpbooklist_desc_p_class wpbooklist-comments-actual-wrapper">
+						<div class="wpbooklist-comments-actual-inner-scroll-wrapper">';
+
+				// The loop that will build some final values and the HTML of each individual comment itself.
+				foreach ( $all_comments as $key => $comment ) {
+
+					// Builds totals from all comments & ratings.
+					if ( null !== $comment->rating ) {
+						$ratings_total = $ratings_total + $comment->rating;
+						$ratings_count++;
+					}
+
+					// Get the User's name that left this comment, if they are a registered WordPress/WPBookList User by their WP User ID.
+					$submitter = '';
+					if ( null !== $comment->submitter ) {
+
+						// Set the current WordPress user.
+						$user      = get_user_by( 'ID', $comment->submitter );
+						$submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name . ' - ';
+
+						// If user didn't have a first or last name specified...
+						if ( $this->trans->trans_35 . '   - ' === $submitter ) {
+							$submitter = $this->trans->trans_35 . ' ' . $user->display_name . ' - ';
+						}
+					}
+
+					// Build this user's rating image.
+					$users_rating_img = '';
+					switch ( $comment->rating ) {
+						case 5:
+							$users_rating_img = '5star.jpg';
+							break;
+						case 4.5:
+							$users_rating_img = '4halfstar.jpg';
+							break;
+						case 4:
+							$users_rating_img = '4star.jpg';
+							break;
+						case 3.5:
+							$users_rating_img = '3halfstar.jpg';
+							break;
+						case 3:
+							$users_rating_img = '3star.jpg';
+							break;
+						case 2.5:
+							$users_rating_img = '2halfstar.jpg';
+							break;
+						case 2:
+							$users_rating_img = '2star.jpg';
+							break;
+						case 1.5:
+							$users_rating_img = '1halfstar.jpg';
+							break;
+						case 1:
+							$users_rating_img = '1star.jpg';
+							break;
+						case 0.5:
+							$users_rating_img = 'halfstar.jpg';
+							break;
+						default:
+							break;
+					}
+
+					// Builds the actual individual comments HTML.
+					$comments_html = $comments_html .
+						'<div class="wpbooklist-comments-indiv-comment-wrapper">
+							<p class="wpbooklist-comments-username-p">' . $submitter . '
+								<img class="wpbooklist-comments-users-rating-img" src="' . ROOT_IMG_URL . $users_rating_img . '"/>
+							</p>
+							<p class="wpbooklist-comments-comment-actual-p">' . $comment->comment . '</p>
+							<div class="wpbooklist-comments-likes-wrapper">
+								<div class="wpbooklist-comments-likes-thumb-img-wrapper">
+									<img class="wpbooklist-comments-likes-thumb-img" src="' . COMMENTS_ROOT_IMG_ICONS_URL . 'like.svg" />
+								</div>
+								<p class="wpbooklist-comments-total-likes-p">' . $comment->likes . ' ' . $this->trans->trans_36 . '</p>
+							</div>
+						</div>';
+				}
+
+				// Now finish up some of the final calculations needed.
+				if ( 0 !== $ratings_total && 0 !== $ratings_count ) {
+					$average_rating = $ratings_total / $ratings_count;
+				}
+
+				// Adjust average rating amount if there was no ratings for this title.
+				if ( null === $average_rating ) {
+					$average_rating = $this->trans->trans_31;
+				}
+
+				// If there is just one comment, adjust text accordingly.
+				$plural_text = '';
+				if ( 1 === $ratings_count ) {
+					$plural_text = $this->trans->trans_4;
+				} else {
+					$plural_text = $this->trans->trans_32;
+				}
+
+				// Round the Avergae Rating up to the next 0.5.
+				$whole_number = (int) $average_rating;
+				$decimal      = $average_rating - $whole_number;
+				if ( 0 === $decimal ) {
+					$average_rating = $whole_number;
+				} elseif ( .5 >= $decimal ) {
+					$average_rating = $whole_number + .5;
+				} elseif ( .5 < $decimal ) {
+					$average_rating = $whole_number + 1;
+				}
+
+				// Now configure which star rating image to use.
+				$rating_img = '';
+				switch ( $average_rating ) {
+					case 5:
+						$rating_img = '5star.jpg';
+						break;
+					case 4.5:
+						$rating_img = '4halfstar.jpg';
+						break;
+					case 4:
+						$rating_img = '4star.jpg';
+						break;
+					case 3.5:
+						$rating_img = '3halfstar.jpg';
+						break;
+					case 3:
+						$rating_img = '3star.jpg';
+						break;
+					case 2.5:
+						$rating_img = '2halfstar.jpg';
+						break;
+					case 2:
+						$rating_img = '2star.jpg';
+						break;
+					case 1.5:
+						$rating_img = '1halfstar.jpg';
+						break;
+					case 1:
+						$rating_img = '1star.jpg';
+						break;
+					case 0.5:
+						$rating_img = 'halfstar.jpg';
+						break;
+					default:
+						break;
+				}
+
+				// Put together the HTML for displaying total number of comments and the average rating and it's associated star image.
+				$totals_html = '
+					<div class="wpbooklist-comments-totals-wrapper">
+						<div class="wpbooklist-comments-total"><span>' . $ratings_count . '</span> ' . $plural_text . '</div>
+						<div class="wpbooklist-comments-average-rating">
+							<div class="wpbooklist-comments-average-rating-text">' . $this->trans->trans_33 . ': ' . $average_rating . ' ' . $this->trans->trans_34 . '</div>
+							<img class="wpbooklist-comments-average-rating-img" src="' . ROOT_IMG_URL . $rating_img . '" />
+						</div>
+					</div>';
+
+				$closing_html = '</div>
+					</div>';
+
+				$final_html = $opening_html . $totals_html . $comments_html . $closing_html;
+			}
+			return $final_html;
 		}
 
 	}
