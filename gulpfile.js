@@ -74,45 +74,45 @@ gulp.task( 'concatFrontendJs', function() {
 });
 
 gulp.task( 'copyassets', function () {
-	gulp.src([ './assets/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './assets/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copyincludes', function () {
-	gulp.src([ './includes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './includes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copyquotes', function () {
-	gulp.src([ './quotes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './quotes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copyconfig', function () {
-	gulp.src([ './wpbooklistconfig.ini' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './wpbooklistconfig.ini' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copyreadme', function () {
-	gulp.src([ './readme.txt' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './readme.txt' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copylang', function () {
-	gulp.src([ './languages/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './languages/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'copymainfile', function () {
-	gulp.src([ './wpbooklist.php' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './wpbooklist-comments.php' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'zip', function () {
-	return gulp.src( '../wpbooklist_dist/WPBookList-Distribution/**' )
-		.pipe(zip( 'wpbooklist.zip' ) )
-		.pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	return gulp.src( '../wpbooklist-comments_dist/**' )
+		.pipe(zip( 'wpbooklist-comments.zip' ) )
+		.pipe(gulp.dest( '../wpbooklist-comments_dist' ) );
 });
 
 gulp.task( 'cleanzip', function(cb) {
-	del([ '../wpbooklist_dist/WPBookList-Distribution/**/*' ], {force: true}, cb);
+	del([ '../wpbooklist-comments_dist/**/*' ], {force: true}, cb);
 });
 
 gulp.task( 'clean', function(cb) {
-	del([ '../wpbooklist_dist/WPBookList-Distribution/**/*', '!../wpbooklist_dist/WPBookList-Distribution/wpbooklist.zip' ], {force: true}, cb);
+	del([ '../wpbooklist-comments_dist/**/*', '!../wpbooklist-comments_dist/wpbooklist-comments.zip' ], {force: true}, cb);
 });
 
 // Task to watch for changes in our file sources

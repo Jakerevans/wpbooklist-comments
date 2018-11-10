@@ -23,7 +23,557 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		 */
 		public function __construct() {
 
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
 
+			// Set the date.
+			require_once ROOT_WPBL_UTILITIES_DIR . 'class-wpbooklist-utilities-date.php';
+			$utilities_date = new WPBookList_Utilities_Date();
+			$this->date     = $utilities_date->wpbooklist_get_date_via_current_time( 'mysql' );
+
+			// Get Translations.
+			require_once COMMENTS_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-comments-translations.php';
+			$this->trans = new WPBookList_Comments_Translations();
+			$this->trans->trans_strings();
+
+		}
+
+		/**
+		 * Callback function for incrementing the Comment Likes.
+		 */
+		public function wpbooklist_comments_like_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_like_action_callback', 'security' );
+
+			if ( isset( $_POST['commentid'] ) ) {
+				$commentid = filter_var( wp_unslash( $_POST['commentid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['newlikes'] ) ) {
+				$newlikes  = filter_var( wp_unslash( $_POST['newlikes'] ), FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( isset( $_POST['bookuid'] ) ) {
+				$bookuid  = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$data         = array(
+				'likes' => $newlikes,
+			);
+			$format       = array( '%d' );
+			$where        = array( 'ID' => $commentid );
+			$where_format = array( '%s' );
+			$result = $wpdb->update( $wpdb->prefix . 'wpbooklist_comments', $data, $where, $format, $where_format );
+
+			// Now attempting to delete the existing Transient for this comment, as the data has changed.
+			$transient_name   = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
+
+			// End the function.
+			wp_die( ' Like DB result is ' . $result . ' and Transient deletion is ' . $transient_delete_api_data_result );
+
+		}
+
+		/**
+		 * Callback function for submitting a new comment.
+		 */
+		public function wpbooklist_comments_submit_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_submit_action_callback', 'security' );
+
+			if ( isset( $_POST['bookid'] ) ) {
+				$bookid = filter_var( wp_unslash( $_POST['bookid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['booktitle'] ) ) {
+				$booktitle = filter_var( wp_unslash( $_POST['booktitle'] ), FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( isset( $_POST['bookuid'] ) ) {
+				$bookuid = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['library'] ) ) {
+				$library = filter_var( wp_unslash( $_POST['library'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['rating'] ) ) {
+				$rating = filter_var( wp_unslash( $_POST['rating'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['commentactual'] ) ) {
+				$commentactual = filter_var( wp_unslash( $_POST['commentactual'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$status = 'pending';
+			$dateapproved = null;
+
+			$current_user = wp_get_current_user();
+			$submitter = null;
+			if ( ( $current_user instanceof WP_User ) ) {
+				$submitter = $current_user->ID;
+			}
+
+			// Now get the Comments Settings to see if we'll set the status of this comment to the default of Pending, or if user want's to auto-approve, meaning the status will be set to Approved.
+			$this->comment_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_comments_settings' );
+
+			// Set the status of the comment.
+			if ( $this->comment_settings->autoapprove ) {
+				$status = 'approved';
+				$dateapproved = $this->date;
+			}
+
+			// Now we'll save the comment.
+			$comment_array = array(
+				'bookid'        => $bookid,
+				'booktitle'     => $booktitle,
+				'bookuid'       => $bookuid,
+				'library'       => $library,
+				'rating'        => $rating,
+				'comment'       => $commentactual,
+				'status'        => $status,
+				'submitter'     => $submitter,
+				'likes'         => 0,
+				'datesubmitted' => $this->date,
+				'dateapproved'  => $dateapproved,
+			);
+
+			// Building mask array to add to DB.
+			$db_mask_insert_array = array(
+				'%d',
+				'%s',
+				'%s',
+				'%s',
+				'%f',
+				'%s',
+				'%s',
+				'%d',
+				'%d',
+				'%s',
+				'%s',
+			);
+
+			$result = $wpdb->insert( $wpdb->prefix . 'wpbooklist_comments', $comment_array, $db_mask_insert_array );
+
+			// Now attempting to delete the existing Transient for this comment, as the data has changed.
+			$transient_name   = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
+
+			// End the function.
+			wp_die( $result . '-' . $status );
+		}
+
+		/**
+		 * Callback function for submitting a new comment.
+		 */
+		public function wpbooklist_comments_approve_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_approve_action_callback', 'security' );
+
+			if ( isset( $_POST['commentid'] ) ) {
+				$commentid = filter_var( wp_unslash( $_POST['commentid'] ), FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( isset( $_POST['rating'] ) ) {
+				$rating = filter_var( wp_unslash( $_POST['rating'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['commentactual'] ) ) {
+				$commentactual = filter_var( wp_unslash( $_POST['commentactual'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$data         = array(
+				'comment' => $commentactual,
+				'rating'  => $rating,
+				'status'  => 'approved',
+			);
+
+			$format       = array( '%s', '%s', '%s' );
+			$where        = array( 'ID' => $commentid );
+			$where_format = array( '%d' );
+			$result = $wpdb->update( $wpdb->prefix . 'wpbooklist_comments', $data, $where, $format, $where_format );
+
+			// Now attempting to delete the existing Transient for this comment, as the data has changed.
+			$transient_name = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
+
+			// End the function.
+			wp_die( $result );
+		}
+
+		/**
+		 * Callback function for submitting a new comment.
+		 */
+		public function wpbooklist_comments_edit_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_edit_action_callback', 'security' );
+
+			if ( isset( $_POST['commentid'] ) ) {
+				$commentid = filter_var( wp_unslash( $_POST['commentid'] ), FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( isset( $_POST['commentactual'] ) ) {
+				$commentactual = filter_var( wp_unslash( $_POST['commentactual'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['rating'] ) ) {
+				$rating = filter_var( wp_unslash( $_POST['rating'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['bookuid'] ) ) {
+				$bookuid = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$data         = array(
+				'comment' => $commentactual,
+				'rating'  => $rating,
+			);
+			$format       = array( '%s' );
+			$where        = array( 'ID' => $commentid );
+			$where_format = array( '%d' );
+			$result = $wpdb->update( $wpdb->prefix . 'wpbooklist_comments', $data, $where, $format, $where_format );
+
+			// Now attempting to delete the existing Transient for this comment, as the data has changed.
+			$transient_name = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
+
+			// End the function.
+			wp_die( $result );
+		}
+
+
+		/**
+		 * Callback function for submitting a new comment.
+		 */
+		public function wpbooklist_comments_delete_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_delete_action_callback', 'security' );
+
+			if ( isset( $_POST['commentid'] ) ) {
+				$commentid = filter_var( wp_unslash( $_POST['commentid'] ), FILTER_SANITIZE_NUMBER_INT );
+			}
+
+			if ( isset( $_POST['bookuid'] ) ) {
+				$bookuid = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$result = $wpdb->delete( $wpdb->prefix . 'wpbooklist_comments', array( 'ID' => $commentid ), array( '%d' ) );
+
+			// Now attempting to delete the existing Transient for this comment, as the data has changed.
+			$transient_name = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
+
+			// End the function.
+			wp_die( $result );
+		}
+
+		/**
+		 * Callback function for submitting a new comment.
+		 */
+		public function wpbooklist_comments_maniparchived_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_maniparchived_action_callback', 'security' );
+
+			if ( isset( $_POST['viewdelete'] ) ) {
+				$viewdelete = filter_var( wp_unslash( $_POST['viewdelete'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['timeframe'] ) ) {
+				$timeframe = filter_var( wp_unslash( $_POST['timeframe'] ), FILTER_SANITIZE_STRING );
+			}
+
+			// If the inputs aren't null...
+			$final_html = '';
+			if ( null !== $timeframe && null !== $viewdelete ) {
+
+				// Handling the Viewing of archived comments.
+				if ( $this->trans->trans_21 === $viewdelete ) {
+
+					// Now determine the Timeframe.
+					$days = '0';
+					switch ( $timeframe ) {
+						case $this->trans->trans_25:
+							$days = '60';
+							break;
+						case $this->trans->trans_26:
+							$days = '90';
+							break;
+						case $this->trans->trans_27:
+							$days = '120';
+							break;
+						case $this->trans->trans_28:
+							$days = '0';
+							break;
+						default:
+							# code...
+							break;
+					}
+
+					// Figuring out the date to compare to, based on the user's selection in the timeframe dropdown.
+					$date = explode( '-', $this->date );
+					$date = date_create( $date[2] . '-' . $date[0] . '-' . $date[1] );
+					date_sub( $date, date_interval_create_from_date_string( $days . ' days' ) );
+					$newdate = date_format( $date, 'Y-m-d' );
+
+					// Grab all archived comment from DB.
+					$this->commentsarchived = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status = 'archived'");
+
+					foreach ( $this->commentsarchived as $key => $archivedcomment ) {
+
+						// Converting date from DB to use in comparison with the strtotime() functions.
+						$archivedcomment->datesubmitted = explode( '-', $archivedcomment->datesubmitted );
+						$archivedcomment->datesubmitted =  $archivedcomment->datesubmitted[2] . '-' . $archivedcomment->datesubmitted[0] . '-' . $archivedcomment->datesubmitted[1];
+
+						// If date is newer that what user specified, remove from array.
+						if ( strtotime( $archivedcomment->datesubmitted ) >= strtotime( $newdate ) ) {
+							unset($this->commentsarchived[$key]);
+						}
+					}
+
+					// Build HTML to return to browser.
+					foreach ( $this->commentsarchived as $key => $value ) {
+
+						// Building the Star Rating drop-down.
+						$rating_options = '';
+						$rating_img = '';
+						switch ( $value->rating ) {
+							case 5:
+								$rating_options = '<option value="5" selected default>' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '5star.jpg';
+								break;
+							case 4.5:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5" selected default>' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '4halfstar.jpg';
+								break;
+							case 4:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4" selected default>' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '4star.jpg';
+								break;
+							case 3.5:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5" selected default>' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '3halfstar.jpg';
+								break;
+							case 3:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3" selected default>' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '3star.jpg';
+								break;
+							case 2.5:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5" selected default>' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '2halfstar.jpg';
+								break;
+							case 2:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2" selected default>' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '2star.jpg';
+								break;
+							case 1.5:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5" selected default>' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '1halfstar.jpg';
+								break;
+							case 1:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1" selected default>' . $this->trans->trans_18 . '</option>
+												   <option value="0.5">' . $this->trans->trans_19 . '</option>';
+								$rating_img = '1star.jpg';
+								break;
+							case 0.5:
+								$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+												   <option value="4.5">' . $this->trans->trans_11 . '</option>
+												   <option value="4">' . $this->trans->trans_12 . '</option>
+												   <option value="3.5">' . $this->trans->trans_13 . '</option>
+												   <option value="3">' . $this->trans->trans_14 . '</option>
+												   <option value="2.5">' . $this->trans->trans_15 . '</option>
+												   <option value="2">' . $this->trans->trans_16 . '</option>
+												   <option value="1.5">' . $this->trans->trans_17 . '</option>
+												   <option value="1">' . $this->trans->trans_18 . '</option>
+												   <option value="0.5" selected default>' . $this->trans->trans_19 . '</option>';
+								$rating_img = 'halfstar.jpg';
+								break;
+
+							default:
+								# code...
+								break;
+						}
+
+						$final_html = $final_html . '<div class="wpbooklist-comments-indiv-wrapper wpbooklist-edit-book-indiv-div-class">
+									<div class="wpbooklist-comments-number-wrapper">
+										<p class="wpbooklist-comments-number-title"> ' . $this->trans->trans_66 . ' ' . $this->trans->trans_4 . ' ' . $this->trans->trans_5 . ( $key + 1 ) . ' </p>
+										<p class="wpbooklist-comments-number-title-date">' . $value->datesubmitted . '</p>
+										<p class="wpbooklist-edit-book-title wpbooklist-show-book-colorbox" data-booktable="' . $value->library . '" data-bookid="' . $value->bookid . '">' . $value->booktitle . '</p>
+									</div>
+									<div class="wpbooklist-comments-actual-wrapper">
+										<div class="wpbooklist-comments-star-rating-wrapper">
+											<select class="wpbooklist-comments-star-dropdown">
+												' . $rating_options . '
+											</select>
+											<img class="wpbooklist-comments-star-rating-img" src="' . ROOT_IMG_URL . $rating_img . '" />
+											<div class="wpbooklist-comments-status-wrapper">
+												<img class="wpbooklist-comments-approve-pending-img" src="' . ROOT_IMG_ICONS_URL . 'happy.svg" />
+												<p>' . $this->trans->trans_66 . '</p>
+											</div>
+										</div>
+										<textarea>' . $value->comment . '</textarea>
+									</div>
+								<div class="wpbooklist-comments-control-div-wrapper">
+									<div class="wpbooklist-comments-control-button-edit" data-commentid="' . $value->ID . '" data-bookuid="' . $value->bookuid . '">
+										<p>' . $this->trans->trans_8 . '
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
+										</p>
+									</div>
+									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $value->ID . '" data-bookuid="' . $value->bookuid . '"> 
+										<p>' . $this->trans->trans_9 . '
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
+										</p>
+									</div>
+									<div class="wpbooklist-spinner wpbooklist-spinner-comments" id="wpbooklist-spinner-' . ( $key + 1 ) . '"></div>
+								</div>
+							</div>';
+					}
+				} else {
+
+					// Now determine the Timeframe.
+					$days = '0';
+					switch ( $timeframe ) {
+						case $this->trans->trans_25:
+							$days = '60';
+							break;
+						case $this->trans->trans_26:
+							$days = '90';
+							break;
+						case $this->trans->trans_27:
+							$days = '120';
+							break;
+						case $this->trans->trans_28:
+							$days = '0';
+							break;
+						default:
+							# code...
+							break;
+					}
+
+					// Figuring out the date to compare to, based on the user's selection in the timeframe dropdown.
+					$date = explode( '-', $this->date );
+					$date = date_create( $date[2] . '-' . $date[0] . '-' . $date[1] );
+					date_sub( $date, date_interval_create_from_date_string( $days . ' days' ) );
+					$newdate = date_format( $date, 'Y-m-d' );
+
+					// Grab all archived comment from DB.
+					$this->commentsarchived = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status = 'archived'");
+
+					foreach ( $this->commentsarchived as $key => $archivedcomment ) {
+
+						// Converting date from DB to use in comparison with the strtotime() functions.
+						$archivedcomment->datesubmitted = explode( '-', $archivedcomment->datesubmitted );
+						$archivedcomment->datesubmitted =  $archivedcomment->datesubmitted[2] . '-' . $archivedcomment->datesubmitted[0] . '-' . $archivedcomment->datesubmitted[1];
+
+						// If date is newer that what user specified, remove from array.
+						if ( strtotime( $archivedcomment->datesubmitted ) >= strtotime( $newdate ) ) {
+							unset($this->commentsarchived[$key]);
+						}
+					}
+
+					foreach ( $this->commentsarchived as $key => $value ) {
+
+						$result = $wpdb->delete( $wpdb->prefix . 'wpbooklist_comments', array( 'ID' => $value->ID ), array( '%d' ) );
+						# code...
+					}
+
+				}
+			}
+
+			// End the function.
+			wp_die( $final_html );
 		}
 
 	}

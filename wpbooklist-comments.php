@@ -76,6 +76,9 @@ global $wpdb;
 	// Root WPBL Transients Dir.
 	define( 'ROOT_WPBL_TRANSIENTS_DIR', ROOT_WPBL_CLASSES_DIR . 'transients/' );
 
+	// Root WPBL Utilities Dir.
+	define( 'ROOT_WPBL_UTILITIES_DIR', ROOT_WPBL_CLASSES_DIR . 'utilities/' );
+
 	// Root plugin folder URL .
 	define( 'COMMENTS_ROOT_URL', plugins_url() . '/wpbooklist-comments/' );
 
@@ -124,7 +127,12 @@ global $wpdb;
 	// Nonces array.
 	define( 'COMMENTS_NONCES_ARRAY',
 		wp_json_encode(array(
-			'adminnonce1' => 'wpbooklist_comments_functionname_action_callback',
+			'adminnonce1' => 'wpbooklist_comments_like_action_callback',
+			'adminnonce2' => 'wpbooklist_comments_submit_action_callback',
+			'adminnonce3' => 'wpbooklist_comments_approve_action_callback',
+			'adminnonce4' => 'wpbooklist_comments_edit_action_callback',
+			'adminnonce5' => 'wpbooklist_comments_delete_action_callback',
+			'adminnonce6' => 'wpbooklist_comments_maniparchived_action_callback',
 		))
 	);
 
@@ -194,7 +202,26 @@ global $wpdb;
 /* FUNCTIONS FOUND IN CLASS-WPBOOKLIST-AJAX-FUNCTIONS.PHP THAT APPLY PLUGIN-WIDE */
 
 	// For receiving user feedback upon deactivation & deletion.
-	add_action( 'wp_ajax_comments_exit_results_action', array( $comments_ajax_functions, 'comments_exit_results_action_callback' ) );
+	add_action( 'wp_ajax_wpbooklist_comments_like_action', array( $comments_ajax_functions, 'wpbooklist_comments_like_action_callback' ) );
+	add_action( 'wp_ajax_nopriv_wpbooklist_comments_like_action', array( $comments_ajax_functions, 'wpbooklist_comments_like_action_callback' ) );
+
+	// For submitting a new comment
+	add_action( 'wp_ajax_wpbooklist_comments_submit_action', array( $comments_ajax_functions, 'wpbooklist_comments_submit_action_callback' ) );
+	add_action( 'wp_ajax_nopriv_wpbooklist_comments_submit_action', array( $comments_ajax_functions, 'wpbooklist_comments_submit_action_callback' ) );
+
+	// For approving a comment from thte dashboard.
+	add_action( 'wp_ajax_wpbooklist_comments_approve_action', array( $comments_ajax_functions, 'wpbooklist_comments_approve_action_callback' ) );
+
+	// For approving a comment from the dashboard.
+	add_action( 'wp_ajax_wpbooklist_comments_edit_action', array( $comments_ajax_functions, 'wpbooklist_comments_edit_action_callback' ) );
+
+	// For deleting a comment from the dashboard.
+	add_action( 'wp_ajax_wpbooklist_comments_delete_action', array( $comments_ajax_functions, 'wpbooklist_comments_delete_action_callback' ) );
+
+	// For viewing or deleting archived coments from dashboard.
+	add_action( 'wp_ajax_wpbooklist_comments_maniparchived_action', array( $comments_ajax_functions, 'wpbooklist_comments_maniparchived_action_callback' ) );
+
+	
 
 /* END OF FUNCTIONS FOUND IN CLASS-WPBOOKLIST-AJAX-FUNCTIONS.PHP THAT APPLY PLUGIN-WIDE */
 

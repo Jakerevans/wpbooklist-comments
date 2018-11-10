@@ -23,7 +23,7 @@ if ( ! class_exists( 'WPBookList_Comments', false ) ) :
 		 */
 		public function __construct() {
 			require_once CLASS_DIR . 'class-admin-ui-template.php';
-			require_once COMMENTS_CLASS_DIR . 'class-wpbooklist-comments-form.php';
+			require_once COMMENTS_CLASS_DIR . 'class-wpbooklist-comments-settings-form.php';
 
 			// Get Translations.
 			require_once COMMENTS_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-comments-translations.php';

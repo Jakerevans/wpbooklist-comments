@@ -31,7 +31,11 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 			$this->trans->trans_strings();
 
 			// Let's grab all comments from the DB that have a status of anything but Archived. Comments past a certain date (specified by the User on the 'Comment Settings' tab) will be archived. The function that changes a comment's status to 'archived' is in the class-wpbooklist-comment-settings-form.php file, and is ran from it's constructor.
-			$this->comments = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status != 'archived' ORDER BY status DESC" );
+			$this->commentspending = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status = 'pending' ORDER BY datesubmitted DESC" );
+			$this->commentsapproved = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status = 'approved' ORDER BY datesubmitted DESC" );
+
+			// Merge the 2 arrays to display the newest Pending comments first, and then the newest to oldest approved comments.
+			$this->comments = array_merge( $this->commentspending, $this->commentsapproved );
 
 		}
 
@@ -54,133 +58,133 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 				$rating_img = '';
 				switch ( $comment->rating ) {
 					case 5:
-						$rating_options = '<option selected default>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5" selected default>' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '5star.jpg';
 						break;
 					case 4.5:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option selected default>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5" selected default>' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '4halfstar.jpg';
 						break;
 					case 4:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option selected default>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4" selected default>' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '4star.jpg';
 						break;
 					case 3.5:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option selected default>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5" selected default>' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '3halfstar.jpg';
 						break;
 					case 3:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option selected default>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3" selected default>' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '3star.jpg';
 						break;
 					case 2.5:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option selected default>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5" selected default>' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '2halfstar.jpg';
 						break;
 					case 2:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option selected default>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2" selected default>' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '2star.jpg';
 						break;
 					case 1.5:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option selected default>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5" selected default>' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '1halfstar.jpg';
 						break;
 					case 1:
-						$rating_options = '<option>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option selected default>' . $this->trans->trans_18 . '</option>
-										   <option>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1" selected default>' . $this->trans->trans_18 . '</option>
+										   <option value="0.5">' . $this->trans->trans_19 . '</option>';
 						$rating_img = '1star.jpg';
 						break;
 					case 0.5:
-						$rating_options = '<option selected default>' . $this->trans->trans_10 . '</option>
-										   <option>' . $this->trans->trans_11 . '</option>
-										   <option>' . $this->trans->trans_12 . '</option>
-										   <option>' . $this->trans->trans_13 . '</option>
-										   <option>' . $this->trans->trans_14 . '</option>
-										   <option>' . $this->trans->trans_15 . '</option>
-										   <option>' . $this->trans->trans_16 . '</option>
-										   <option>' . $this->trans->trans_17 . '</option>
-										   <option>' . $this->trans->trans_18 . '</option>
-										   <option selected default>' . $this->trans->trans_19 . '</option>';
+						$rating_options = '<option value="5">' . $this->trans->trans_10 . '</option>
+										   <option value="4.5">' . $this->trans->trans_11 . '</option>
+										   <option value="4">' . $this->trans->trans_12 . '</option>
+										   <option value="3.5">' . $this->trans->trans_13 . '</option>
+										   <option value="3">' . $this->trans->trans_14 . '</option>
+										   <option value="2.5">' . $this->trans->trans_15 . '</option>
+										   <option value="2">' . $this->trans->trans_16 . '</option>
+										   <option value="1.5">' . $this->trans->trans_17 . '</option>
+										   <option value="1">' . $this->trans->trans_18 . '</option>
+										   <option value="0.5" selected default>' . $this->trans->trans_19 . '</option>';
 						$rating_img = 'halfstar.jpg';
 						break;
 
@@ -211,12 +215,12 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 										<textarea>' . $comment->comment . '</textarea>
 									</div>
 								<div class="wpbooklist-comments-control-div-wrapper">
-									<div class="wpbooklist-edit-actions-edit-button wpbooklist-comments-control-button-update" data-key="0" data-table="wp_wpbooklist_jre_saved_book_log" data-book-id="1">
+									<div class="wpbooklist-comments-control-button-update" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '">
 										<p>' . $this->trans->trans_6 . '
 											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
 										</p>
 									</div>
-									<div class="wpbooklist-edit-actions-delete-button wpbooklist-comments-control-button-remove" data-key="0" data-table="wp_wpbooklist_jre_saved_book_log" data-book-id="1"> 
+									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '"> 
 										<p>' . $this->trans->trans_7 . '
 											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
 										</p>
@@ -248,12 +252,12 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 										<textarea>' . $comment->comment . '</textarea>
 									</div>
 								<div class="wpbooklist-comments-control-div-wrapper">
-									<div class="wpbooklist-edit-actions-edit-button wpbooklist-comments-control-button-update" data-key="0" data-table="wp_wpbooklist_jre_saved_book_log" data-book-id="1">
+									<div class="wpbooklist-comments-control-button-edit" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '">
 										<p>' . $this->trans->trans_8 . '
 											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
 										</p>
 									</div>
-									<div class="wpbooklist-edit-actions-delete-button wpbooklist-comments-control-button-remove" data-key="0" data-table="wp_wpbooklist_jre_saved_book_log" data-book-id="1"> 
+									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '"> 
 										<p>' . $this->trans->trans_9 . '
 											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
 										</p>
@@ -274,12 +278,12 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 							<p class="wpbooklist-tab-intro-para">' . $this->trans->trans_20 . '</p>
 						</div>
 						<div class="wpbooklist-comments-archived-selection-controls-wrapper">
-							<select>
+							<select class="wpbooklist-comments-archived-selection-controls-view-delete">
 								<option selected default disabled>' . $this->trans->trans_22 . '</option>
 								<option>' . $this->trans->trans_21 . '</option>
 								<option>' . $this->trans->trans_24 . '</option>
 							<select>
-							<select>
+							<select class="wpbooklist-comments-archived-selection-controls-timeframe">
 								<option selected default disabled>' . $this->trans->trans_23 . '</option>
 								<option>' . $this->trans->trans_25 . '</option>
 								<option>' . $this->trans->trans_26 . '</option>
@@ -287,8 +291,14 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 								<option>' . $this->trans->trans_28 . '</option>
 							<select>
 							<div>
-								<button class="wpbooklist-response-success-fail-button" id="wpbooklist-comments-archived-submit">' . $this->trans->trans_29 . '</button>
+								<button disabled="true" class="wpbooklist-response-success-fail-button" id="wpbooklist-comments-archived-submit">' . $this->trans->trans_29 . '</button>
 								<div class="wpbooklist-spinner" id="wpbooklist-spinner-archived"></div>
+							</div>
+
+							<div class="wpbooklist-comments-top-wrapper">
+								<div class="wpbooklist-comments-inner-wrapper" id="wpbooklist-comments-inner-wrapper-archive-response">
+
+								</div>
 							</div>
 						</div>
 					</div>

@@ -202,6 +202,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		public function wpbooklist_comments_register_table_name() {
 			global $wpdb;
 			$wpdb->wpbooklist_comments = "{$wpdb->prefix}wpbooklist_comments";
+			$wpdb->wpbooklist_comments_settings = "{$wpdb->prefix}wpbooklist_comments_settings";
 		}
 
 		/**
@@ -242,6 +243,18 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				KEY bookuid (bookuid)
 			) $charset_collate; ";
 			dbDelta( $sql_create_table1 );
+
+			$sql_create_table2 = "CREATE TABLE {$wpdb->wpbooklist_comments_settings}
+			(
+				ID bigint(190) auto_increment,
+				autoapprove varchar(255) NOT NULL DEFAULT 'false',
+				commentorder varchar(255),
+				archiveafter varchar(255),
+				deleteafter varchar(255),
+				PRIMARY KEY  (ID),
+				KEY autoapprove (autoapprove)
+			) $charset_collate; ";
+			dbDelta( $sql_create_table2 );
 		}
 
 		/**  The function that outputs the actual comment and rating HTML.
@@ -347,7 +360,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 							</p>
 							<p class="wpbooklist-comments-comment-actual-p">' . $comment->comment . '</p>
 							<div class="wpbooklist-comments-likes-wrapper">
-								<div class="wpbooklist-comments-likes-thumb-img-wrapper">
+								<div class="wpbooklist-comments-likes-thumb-img-wrapper" data-likes="' . $comment->likes . '" data-commentid="' . $comment->ID . '" data-bookuid="' . $comments_array[2] . '">
 									<img class="wpbooklist-comments-likes-thumb-img" src="' . COMMENTS_ROOT_IMG_ICONS_URL . 'like.svg" />
 								</div>
 								<p class="wpbooklist-comments-total-likes-p">' . $comment->likes . ' ' . $this->trans->trans_36 . '</p>
@@ -431,11 +444,83 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 						</div>
 					</div>';
 
-				$closing_html = '</div>
+				$comment_addition = '
+				</div>
+				<div class="wpbooklist-comments-add-comment-wrapper">
+					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p>
+					<div class="wpbooklist-comments-add-comment-actual-wrapper">
+						<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
+						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p>
+						<select id="wpbooklist-comments-add-comment-rating-actual">
+							<option value="5">' . $this->trans->trans_10 . '</option>
+							<option value="4.5">' . $this->trans->trans_11 . '</option>
+							<option value="4">' . $this->trans->trans_12 . '</option>
+							<option value="3.5">' . $this->trans->trans_13 . '</option>
+							<option value="3">' . $this->trans->trans_14 . '</option>
+							<option value="2.5">' . $this->trans->trans_15 . '</option>
+							<option value="2">' . $this->trans->trans_16 . '</option>
+							<option value="1.5">' . $this->trans->trans_17 . '</option>
+							<option value="1">' . $this->trans->trans_18 . '</option>
+							<option value="0.5">' . $this->trans->trans_19 . '</option>
+						</select>
+						<img class="wpbooklist-comments-add-comment-rating-img" src="' . ROOT_IMG_URL . '4halfstar.jpg" />
+					</div>
+					<div class="wpbooklist-comments-add-comment-submit-wrapper">
+						<button class="wpbooklist-comments-add-comment-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '" class="wpbooklist-comments-add-comment-submit-button">' . $this->trans->trans_39 . '</button>
+					</div>
+					<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
+					<div id="wpbooklist-colorbox-comments-response-div"></div>
+				</div>';
+
+				$closing_html = '
 					</div>';
 
-				$final_html = $opening_html . $totals_html . $comments_html . $closing_html;
+				$final_html = $opening_html . $totals_html . $comments_html . $comment_addition . $closing_html;
+			} else {
+
+				// If there are no Comments, just output the 'Add a Comment' Section.
+				$opening_html = '
+					<div id="wpbooklist_desc_id">
+						<p class="wpbooklist_description_p" id="wpbooklist-desc-title-id">' . $this->trans->trans_30 . '</p>
+					</div>
+					<div class="wpbooklist_desc_p_class wpbooklist-comments-actual-wrapper">
+						<div class="wpbooklist-comments-actual-inner-scroll-nocomments-wrapper">
+							<p class="wpbooklist-comments-no-comments-yet">' . $this->trans->trans_41 . '</p>';
+
+				$comment_addition = '
+				</div>
+				<div class="wpbooklist-comments-add-comment-wrapper" style="box-shadow:none;">
+					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p>
+					<div class="wpbooklist-comments-add-comment-actual-wrapper">
+						<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
+						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p>
+						<select id="wpbooklist-comments-add-comment-rating-actual">
+							<option value="5">' . $this->trans->trans_10 . '</option>
+							<option value="4.5">' . $this->trans->trans_11 . '</option>
+							<option value="4">' . $this->trans->trans_12 . '</option>
+							<option value="3.5">' . $this->trans->trans_13 . '</option>
+							<option value="3">' . $this->trans->trans_14 . '</option>
+							<option value="2.5">' . $this->trans->trans_15 . '</option>
+							<option value="2">' . $this->trans->trans_16 . '</option>
+							<option value="1.5">' . $this->trans->trans_17 . '</option>
+							<option value="1">' . $this->trans->trans_18 . '</option>
+							<option value="0.5">' . $this->trans->trans_19 . '</option>
+						</select>
+						<img class="wpbooklist-comments-add-comment-rating-img" src="' . ROOT_IMG_URL . '4halfstar.jpg" />
+					</div>
+					<div class="wpbooklist-comments-add-comment-submit-wrapper">
+						<button class="wpbooklist-comments-add-comment-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '" class="wpbooklist-comments-add-comment-submit-button">' . $this->trans->trans_39 . '</button>
+					</div>
+					<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
+					<div id="wpbooklist-colorbox-comments-response-div"></div>
+				</div>';
+
+				$closing_html = '
+					</div>';
+
+				$final_html = $opening_html . $comment_addition . $closing_html;
 			}
+
 			return $final_html;
 		}
 

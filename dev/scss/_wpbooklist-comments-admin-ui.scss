@@ -81,7 +81,7 @@
 	width:100%;
 }
 
-.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove{
+.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-edit, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove{
 	display: inline-block!important;
 	min-width: 100px;
     text-align: center;
@@ -89,11 +89,11 @@
     padding-left: 10px;
 }
 
-.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update:hover, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove:hover{
+.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update:hover, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-edit:hover, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove:hover{
 	box-shadow: none;
 }
 
-.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update p, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove p{
+.wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-update p, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-edit p, .wpbooklist-comments-control-div-wrapper .wpbooklist-comments-control-button-remove p{
 	margin:0px;
 }
 
@@ -119,10 +119,27 @@
 	margin-top:40px;
 }
 
+.wpbooklist-comments-control-button-update, .wpbooklist-comments-control-button-edit, .wpbooklist-comments-control-button-remove{
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+    margin: 5px;
+    background-color: #F05A1A;
+    padding: 7px;
+    padding-left: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    color: white;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#wpbooklist-comments-inner-wrapper-archive-response .wpbooklist-comments-indiv-wrapper{
+    text-align:left;
+}
 
 
 
-
+// BEGINNING OF COLORBOX CSS //
 #colorbox .wpbooklist-comments-totals-wrapper{
 	display: inline-block;
     border: solid 1px #e1e1e1;
@@ -184,5 +201,51 @@
 .wpbooklist-comments-actual-inner-scroll-wrapper{
 	height:350px;
 	overflow: auto;
-
 }
+
+.wpbooklist-comments-add-comment-rating-title, .wpbooklist-comments-add-comment-title{
+	margin-bottom:0px;
+	font-weight: bold;
+}
+
+.wpbooklist-comments-add-comment-title{
+    display: inline-block;
+    min-width: 300px;
+    padding-top: 20px;
+}
+
+.wpbooklist-comments-add-comment-rating-img{
+	width:80px;
+}
+
+.wpbooklist-comments-add-comment-submit-wrapper{
+	margin-top:20px!important;
+}
+
+#colorbox .wpbooklist-comments-add-comment-wrapper{
+	box-shadow: 0px -13px 14px -14px #e1e1e1;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#colorbox #wpbooklist-spinner-comments{
+	height: 10px;
+    width: 10px;
+    margin: 5px auto;
+}
+
+#colorbox #wpbooklist-colorbox-comments-response-div{
+	margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    height: 30px;
+    font-size:12px;
+}
+
+.wpbooklist-comments-no-comments-yet{
+	font-size: 15px;
+    font-weight: bold;
+    font-style: italic;
+}
+// END OF COLORBOX CSS //
