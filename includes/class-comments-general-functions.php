@@ -295,77 +295,80 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				// The loop that will build some final values and the HTML of each individual comment itself.
 				foreach ( $all_comments as $key => $comment ) {
 
-					// Builds totals from all comments & ratings.
-					if ( null !== $comment->rating ) {
-						$ratings_total = $ratings_total + $comment->rating;
-						$ratings_count++;
-					}
+					if ( 'pending' !== $comment->status ) {
 
-					// Get the User's name that left this comment, if they are a registered WordPress/WPBookList User by their WP User ID.
-					$submitter = '';
-					if ( null !== $comment->submitter ) {
-
-						// Set the current WordPress user.
-						$user      = get_user_by( 'ID', $comment->submitter );
-						$submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name . ' - ';
-
-						// If user didn't have a first or last name specified...
-						if ( $this->trans->trans_35 . '   - ' === $submitter ) {
-							$submitter = $this->trans->trans_35 . ' ' . $user->display_name . ' - ';
+						// Builds totals from all comments & ratings.
+						if ( null !== $comment->rating ) {
+							$ratings_total = $ratings_total + $comment->rating;
+							$ratings_count++;
 						}
-					}
 
-					// Build this user's rating image.
-					$users_rating_img = '';
-					switch ( $comment->rating ) {
-						case 5:
-							$users_rating_img = '5star.jpg';
-							break;
-						case 4.5:
-							$users_rating_img = '4halfstar.jpg';
-							break;
-						case 4:
-							$users_rating_img = '4star.jpg';
-							break;
-						case 3.5:
-							$users_rating_img = '3halfstar.jpg';
-							break;
-						case 3:
-							$users_rating_img = '3star.jpg';
-							break;
-						case 2.5:
-							$users_rating_img = '2halfstar.jpg';
-							break;
-						case 2:
-							$users_rating_img = '2star.jpg';
-							break;
-						case 1.5:
-							$users_rating_img = '1halfstar.jpg';
-							break;
-						case 1:
-							$users_rating_img = '1star.jpg';
-							break;
-						case 0.5:
-							$users_rating_img = 'halfstar.jpg';
-							break;
-						default:
-							break;
-					}
+						// Get the User's name that left this comment, if they are a registered WordPress/WPBookList User by their WP User ID.
+						$submitter = '';
+						if ( null !== $comment->submitter ) {
 
-					// Builds the actual individual comments HTML.
-					$comments_html = $comments_html .
-						'<div class="wpbooklist-comments-indiv-comment-wrapper">
-							<p class="wpbooklist-comments-username-p">' . $submitter . '
-								<img class="wpbooklist-comments-users-rating-img" src="' . ROOT_IMG_URL . $users_rating_img . '"/>
-							</p>
-							<p class="wpbooklist-comments-comment-actual-p">' . $comment->comment . '</p>
-							<div class="wpbooklist-comments-likes-wrapper">
-								<div class="wpbooklist-comments-likes-thumb-img-wrapper" data-likes="' . $comment->likes . '" data-commentid="' . $comment->ID . '" data-bookuid="' . $comments_array[2] . '">
-									<img class="wpbooklist-comments-likes-thumb-img" src="' . COMMENTS_ROOT_IMG_ICONS_URL . 'like.svg" />
+							// Set the current WordPress user.
+							$user      = get_user_by( 'ID', $comment->submitter );
+							$submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name . ' - ';
+
+							// If user didn't have a first or last name specified...
+							if ( $this->trans->trans_35 . '   - ' === $submitter ) {
+								$submitter = $this->trans->trans_35 . ' ' . $user->display_name . ' - ';
+							}
+						}
+
+						// Build this user's rating image.
+						$users_rating_img = '';
+						switch ( $comment->rating ) {
+							case 5:
+								$users_rating_img = '5star.jpg';
+								break;
+							case 4.5:
+								$users_rating_img = '4halfstar.jpg';
+								break;
+							case 4:
+								$users_rating_img = '4star.jpg';
+								break;
+							case 3.5:
+								$users_rating_img = '3halfstar.jpg';
+								break;
+							case 3:
+								$users_rating_img = '3star.jpg';
+								break;
+							case 2.5:
+								$users_rating_img = '2halfstar.jpg';
+								break;
+							case 2:
+								$users_rating_img = '2star.jpg';
+								break;
+							case 1.5:
+								$users_rating_img = '1halfstar.jpg';
+								break;
+							case 1:
+								$users_rating_img = '1star.jpg';
+								break;
+							case 0.5:
+								$users_rating_img = 'halfstar.jpg';
+								break;
+							default:
+								break;
+						}
+
+						// Builds the actual individual comments HTML.
+						$comments_html = $comments_html .
+							'<div class="wpbooklist-comments-indiv-comment-wrapper">
+								<p class="wpbooklist-comments-username-p">' . $submitter . '
+									<img class="wpbooklist-comments-users-rating-img" src="' . ROOT_IMG_URL . $users_rating_img . '"/>
+								</p>
+								<p class="wpbooklist-comments-comment-actual-p">' . $comment->comment . '</p>
+								<div class="wpbooklist-comments-likes-wrapper">
+									<div class="wpbooklist-comments-likes-thumb-img-wrapper" data-likes="' . $comment->likes . '" data-commentid="' . $comment->ID . '" data-bookuid="' . $comments_array[2] . '">
+										<img class="wpbooklist-comments-likes-thumb-img" src="' . COMMENTS_ROOT_IMG_ICONS_URL . 'like.svg" />
+									</div>
+									<p class="wpbooklist-comments-total-likes-p">' . $comment->likes . ' ' . $this->trans->trans_36 . '</p>
 								</div>
-								<p class="wpbooklist-comments-total-likes-p">' . $comment->likes . ' ' . $this->trans->trans_36 . '</p>
-							</div>
-						</div>';
+							</div>';
+					}
 				}
 
 				// Now finish up some of the final calculations needed.
@@ -447,10 +450,10 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				$comment_addition = '
 				</div>
 				<div class="wpbooklist-comments-add-comment-wrapper">
-					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p>
+					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
 					<div class="wpbooklist-comments-add-comment-actual-wrapper">
 						<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
-						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p>
+						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
 						<select id="wpbooklist-comments-add-comment-rating-actual">
 							<option value="5">' . $this->trans->trans_10 . '</option>
 							<option value="4.5">' . $this->trans->trans_11 . '</option>
@@ -490,10 +493,10 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				$comment_addition = '
 				</div>
 				<div class="wpbooklist-comments-add-comment-wrapper" style="box-shadow:none;">
-					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p>
+					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
 					<div class="wpbooklist-comments-add-comment-actual-wrapper">
 						<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
-						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p>
+						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
 						<select id="wpbooklist-comments-add-comment-rating-actual">
 							<option value="5">' . $this->trans->trans_10 . '</option>
 							<option value="4.5">' . $this->trans->trans_11 . '</option>

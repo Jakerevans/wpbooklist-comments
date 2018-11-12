@@ -95,6 +95,7 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_64 = __( 'Never Delete Comments', 'wpbooklist-textdomain' );
 			$this->trans_65 = __( 'Thanks for your Rating & Comment!', 'wpbooklist-textdomain' );
 			$this->trans_66 = __( 'Archived', 'wpbooklist-textdomain' );
+			$this->trans_67 = __( 'You\'ve saved your settings!', 'wpbooklist-textdomain' );
 
 
 			// The array of translation strings.
@@ -164,6 +165,8 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 				'trans63' => $this->trans_63,
 				'trans64' => $this->trans_64,
 				'trans65' => $this->trans_65,
+				'trans66' => $this->trans_66,
+				'trans67' => $this->trans_67,
 			);
 
 			return $translation_array;

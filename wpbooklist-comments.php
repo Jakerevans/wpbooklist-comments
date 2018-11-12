@@ -133,6 +133,7 @@ global $wpdb;
 			'adminnonce4' => 'wpbooklist_comments_edit_action_callback',
 			'adminnonce5' => 'wpbooklist_comments_delete_action_callback',
 			'adminnonce6' => 'wpbooklist_comments_maniparchived_action_callback',
+			'adminnonce7' => 'wpbooklist_comments_submit_settings_action_callback',
 		))
 	);
 
@@ -220,6 +221,9 @@ global $wpdb;
 
 	// For viewing or deleting archived coments from dashboard.
 	add_action( 'wp_ajax_wpbooklist_comments_maniparchived_action', array( $comments_ajax_functions, 'wpbooklist_comments_maniparchived_action_callback' ) );
+
+	// For viewing or deleting archived coments from dashboard.
+	add_action( 'wp_ajax_wpbooklist_comments_submit_settings_action', array( $comments_ajax_functions, 'wpbooklist_comments_submit_settings_action_callback' ) );
 
 	
 

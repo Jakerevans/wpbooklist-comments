@@ -40,6 +40,96 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		}
 
 		/**
+		 * Callback function for saving the Comment Settings.
+		 */
+		public function wpbooklist_comments_submit_settings_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_submit_settings_action_callback', 'security' );
+
+			if ( isset( $_POST['commentsarrive'] ) ) {
+				$commentsarrive = filter_var( wp_unslash( $_POST['commentsarrive'] ), FILTER_SANITIZE_STRING );
+
+				if ( $this->trans->trans_44 === $commentsarrive ) {
+					$commentsarrive = 'pending';
+				} else {
+					$commentsarrive = 'approve';
+				}
+
+			}
+
+			if ( isset( $_POST['displayorder'] ) ) {
+				$displayorder = filter_var( wp_unslash( $_POST['displayorder'] ), FILTER_SANITIZE_STRING );
+				if ( $this->trans->trans_47 === $displayorder ) {
+					$displayorder = 'newfirst';
+				} elseif ( $this->trans->trans_48 === $displayorder ) {
+					$displayorder = 'oldfirst';
+				} elseif ( $this->trans->trans_49 === $displayorder ) {
+					$displayorder = 'mostlikes';
+				} else {
+					$displayorder = 'leastlikes';
+				}
+			}
+
+			if ( isset( $_POST['archiveafter'] ) ) {
+				$archiveafter = filter_var( wp_unslash( $_POST['archiveafter'] ), FILTER_SANITIZE_STRING );
+				if ( $this->trans->trans_52 === $archiveafter ) {
+					$archiveafter = '30';
+				} elseif ( $this->trans->trans_53 === $archiveafter ) {
+					$archiveafter = '60';
+				} elseif ( $this->trans->trans_54 === $archiveafter ) {
+					$archiveafter = '90';
+				} elseif ( $this->trans->trans_55 === $archiveafter ) {
+					$archiveafter = '180';
+				} elseif ( $this->trans->trans_56 === $archiveafter ) {
+					$archiveafter = '364';
+				} else {
+					$archiveafter = '0';
+				}
+			}
+
+			if ( isset( $_POST['deleteafter'] ) ) {
+				$deleteafter = filter_var( wp_unslash( $_POST['deleteafter'] ), FILTER_SANITIZE_STRING );
+				if ( $this->trans->trans_59 === $deleteafter ) {
+					$deleteafter = '30';
+				} elseif ( $this->trans->trans_60 === $deleteafter ) {
+					$deleteafter = '60';
+				} elseif ( $this->trans->trans_61 === $deleteafter ) {
+					$deleteafter = '90';
+				} elseif ( $this->trans->trans_62 === $deleteafter ) {
+					$deleteafter = '180';
+				} elseif ( $this->trans->trans_63 === $deleteafter ) {
+					$deleteafter = '364';
+				} else {
+					$deleteafter = '0';
+				}
+			}
+
+			// Now we'll save the comment.
+			$settings_array = array(
+				'autoapprove'  => $commentsarrive,
+				'commentorder' => $displayorder,
+				'archiveafter' => $archiveafter,
+				'deleteafter'  => $deleteafter,
+			);
+
+			// Building mask array to add to DB.
+			$db_mask_insert_array = array(
+				'%s',
+				'%s',
+				'%s',
+				'%s',
+			);
+
+			$where        = array( 'ID' => 1 );
+			$where_format = array( '%d' );
+			$result = $wpdb->update( $wpdb->prefix . 'wpbooklist_comments_settings', $settings_array, $where, $db_mask_insert_array, $where_format );
+
+			wp_die( $result );
+		}
+
+		/**
 		 * Callback function for incrementing the Comment Likes.
 		 */
 		public function wpbooklist_comments_like_action_callback() {
@@ -123,9 +213,11 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 			$this->comment_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_comments_settings' );
 
 			// Set the status of the comment.
-			if ( $this->comment_settings->autoapprove ) {
+			if ( 'approve' === $this->comment_settings->autoapprove ) {
 				$status = 'approved';
 				$dateapproved = $this->date;
+			} else {
+				$status = 'pending';
 			}
 
 			// Now we'll save the comment.
@@ -715,13 +807,13 @@ function wpbooklist_comments_save_default_action_javascript() {
 
 			// Making checks to see if Comments extension is active
 			if(upsells != undefined){
-				for (var i = 0; i < upsells.length; i++) {
+				for (var i = '0'; i < upsells.length; i++) {
 					upsellString = upsellString+','+upsells[i];
 				};
 			}
 
 			if(crosssells != undefined){
-				for (var i = 0; i < crosssells.length; i++) {
+				for (var i = '0'; i < crosssells.length; i++) {
 					crosssellString = crosssellString+','+crosssells[i];
 				};
 			}
