@@ -181,7 +181,7 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 			}
 
 			if ( isset( $_POST['booktitle'] ) ) {
-				$booktitle = filter_var( wp_unslash( $_POST['booktitle'] ), FILTER_SANITIZE_NUMBER_INT );
+				$booktitle = filter_var( wp_unslash( $_POST['booktitle'] ), FILTER_SANITIZE_STRING );
 			}
 
 			if ( isset( $_POST['bookuid'] ) ) {
@@ -600,12 +600,12 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 								<div class="wpbooklist-comments-control-div-wrapper">
 									<div class="wpbooklist-comments-control-button-edit" data-commentid="' . $value->ID . '" data-bookuid="' . $value->bookuid . '">
 										<p>' . $this->trans->trans_8 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'pencil.svg"> 
 										</p>
 									</div>
 									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $value->ID . '" data-bookuid="' . $value->bookuid . '"> 
 										<p>' . $this->trans->trans_9 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'garbage-bin.svg">
 										</p>
 									</div>
 									<div class="wpbooklist-spinner wpbooklist-spinner-comments" id="wpbooklist-spinner-' . ( $key + 1 ) . '"></div>

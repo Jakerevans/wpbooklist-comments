@@ -48,7 +48,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 			$string2 = '<div class="wpbooklist-book-form-inner-container-dropdown-fields" style="margin-top:10px;">
 							<div class="wpbooklist-book-form-inner-container-dropdown-fields-row" style="margin:20px;">
 								<div class="wpbooklist-book-form-indiv-attribute-container">
-									<img class="wpbooklist-icon-image-question" data-label="book-form-rating" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/question-black.svg">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-rating" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-rating">' . $this->trans->trans_43 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-newcomment-behavior">
 										<option>' . $this->trans->trans_44 . '</option>
@@ -56,7 +56,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									</select>
 								</div>
 								<div class="wpbooklist-book-form-indiv-attribute-container">
-									<img class="wpbooklist-icon-image-question" data-label="book-form-outofprint" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/question-black.svg">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-outofprint" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-outofprint">' . $this->trans->trans_46 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-display-order">
 										<option>' . $this->trans->trans_47 . '</option>
@@ -68,7 +68,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 							</div>
 							<div class="wpbooklist-book-form-inner-container-dropdown-fields-row" style="margin:20px;">
 								<div class="wpbooklist-book-form-indiv-attribute-container">
-									<img class="wpbooklist-icon-image-question" data-label="book-form-finished" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/question-black.svg">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-finished" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_51 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-archive-after">
 										<option>' . $this->trans->trans_52 . '</option>
@@ -80,7 +80,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									</select>
 								</div>
 								<div class="wpbooklist-book-form-indiv-attribute-container">
-									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/question-black.svg">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_58 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-delete-after">
 										<option>' . $this->trans->trans_59 . '</option>

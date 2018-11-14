@@ -53,6 +53,23 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 			$string3 = '';
 			foreach ( $this->comments as $key => $comment ) {
 
+				// Set the username, if there is one.
+				$this->submitter = '';
+				if ( null !== $comment->submitter && '' !== $comment->submitter ) {
+
+					// Set the current WordPress user.
+					$user      = get_user_by( 'ID', $comment->submitter );
+
+					if ( ( $user instanceof WP_User ) ) {
+						$this->submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name;
+
+						// If user didn't have a first or last name specified...
+						if ( $this->trans->trans_35 . '  ' === $this->submitter ) {
+							$this->submitter = $this->trans->trans_35 . ' ' . $user->display_name;
+						}
+					}
+				}
+
 				// Building the Star Rating drop-down.
 				$rating_options = '';
 				$rating_img = '';
@@ -198,6 +215,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 								<div class="wpbooklist-comments-indiv-wrapper wpbooklist-edit-book-indiv-div-class">
 									<div class="wpbooklist-comments-number-wrapper">
 										<p class="wpbooklist-comments-number-title">' . $this->trans->trans_4 . ' ' . $this->trans->trans_5 . ( $key + 1 ) . ' </p>
+										<p class="wpbooklist-comments-number-title-date">' . $this->submitter . '</p>
 										<p class="wpbooklist-comments-number-title-date">' . $comment->datesubmitted . '</p>
 										<p class="wpbooklist-edit-book-title wpbooklist-show-book-colorbox" data-booktable="' . $comment->library . '" data-bookid="' . $comment->bookid . '">' . $comment->booktitle . '</p>
 									</div>
@@ -217,12 +235,12 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 								<div class="wpbooklist-comments-control-div-wrapper">
 									<div class="wpbooklist-comments-control-button-update" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '">
 										<p>' . $this->trans->trans_6 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'pencil.svg"> 
 										</p>
 									</div>
 									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '"> 
 										<p>' . $this->trans->trans_7 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'garbage-bin.svg">
 										</p>
 									</div>
 									<div class="wpbooklist-spinner wpbooklist-spinner-comments" id="wpbooklist-spinner-' . ( $key + 1 ) . '"></div>
@@ -235,6 +253,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 								<div class="wpbooklist-comments-indiv-wrapper wpbooklist-edit-book-indiv-div-class">
 									<div class="wpbooklist-comments-number-wrapper">
 										<p class="wpbooklist-comments-number-title">' . $this->trans->trans_4 . ' ' . $this->trans->trans_5 . ( $key + 1 ) . ' </p>
+										<p class="wpbooklist-comments-number-title-date">' . $this->submitter . '</p>
 										<p class="wpbooklist-comments-number-title-date">' . $comment->datesubmitted . '</p>
 										<p class="wpbooklist-edit-book-title wpbooklist-show-book-colorbox" data-booktable="' . $comment->library . '" data-bookid="' . $comment->bookid . '">' . $comment->booktitle . '</p>
 									</div>
@@ -254,12 +273,12 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 								<div class="wpbooklist-comments-control-div-wrapper">
 									<div class="wpbooklist-comments-control-button-edit" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '">
 										<p>' . $this->trans->trans_8 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/pencil.svg"> 
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'pencil.svg"> 
 										</p>
 									</div>
 									<div class="wpbooklist-comments-control-button-remove" data-commentid="' . $comment->ID . '" data-bookuid="' . $comment->bookuid . '"> 
 										<p>' . $this->trans->trans_9 . '
-											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="http://localhost/local/wp-content/plugins/wpbooklist/assets/img/icons/garbage-bin.svg">
+											<img class="wpbooklist-edit-book-icon wpbooklist-edit-book-icon-button" src="' . ROOT_IMG_ICONS_URL . 'garbage-bin.svg">
 										</p>
 									</div>
 									<div class="wpbooklist-spinner wpbooklist-spinner-comments" id="wpbooklist-spinner-' . ( $key + 1 ) . '"></div>
