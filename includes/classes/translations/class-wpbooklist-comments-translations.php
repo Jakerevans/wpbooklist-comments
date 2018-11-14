@@ -104,7 +104,7 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_73 = __( 'Password', 'wpbooklist-textdomain' );
 			$this->trans_74 = __( 'Log In', 'wpbooklist-textdomain' );
 			$this->trans_75 = __( 'You\'re Logged in! The Page Will now Reload.' , 'wpbooklist-textdomain' );
-
+			$this->trans_76 = __( 'Whoops! Looks Like your Username or Password were entered incorrectly! Please try again.' , 'wpbooklist-textdomain' );
 
 			// The array of translation strings.
 			$translation_array = array(
@@ -183,6 +183,7 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 				'trans73' => $this->trans_73,
 				'trans74' => $this->trans_74,
 				'trans75' => $this->trans_75,
+				'trans76' => $this->trans_76,
 			);
 
 			return $translation_array;

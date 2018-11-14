@@ -455,10 +455,18 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 					<div class="wpbooklist-comments-totals-wrapper">
 						<div class="wpbooklist-comments-total"><span>' . $ratings_count . '</span> ' . $plural_text . '</div>
 						<div class="wpbooklist-comments-average-rating">
-							<div class="wpbooklist-comments-average-rating-text">' . $this->trans->trans_33 . ': ' . $average_rating . ' ' . $this->trans->trans_34 . '</div>
-							<img class="wpbooklist-comments-average-rating-img" src="' . ROOT_IMG_URL . $rating_img . '" />
+							<div class="wpbooklist-comments-average-rating-text">' . $this->trans->trans_33 . ': ' . $average_rating . ' ' . $this->trans->trans_34 . '</div>';
+
+				// If there are no ratings, then don't display any stars.
+				if ( '' === $rating_img ) {
+					$totals_html = $totals_html . '
 						</div>
 					</div>';
+				} else {
+					$totals_html = $totals_html . '<img class="wpbooklist-comments-average-rating-img" src="' . ROOT_IMG_URL . $rating_img . '" />
+						</div>
+					</div>';
+				}
 
 				// A conditional that will test for whether of not the user must be authenticated before displaying the 'Submit New Comment' HTML.
 				$comment_addition = '';
@@ -551,6 +559,16 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				$final_html = $opening_html . $totals_html . $comments_html . $comment_addition . $closing_html;
 			} else {
 
+
+
+
+
+
+
+
+
+
+
 				// If there are no Comments, just output the 'Add a Comment' Section.
 				$opening_html = '
 					<div id="wpbooklist_desc_id">
@@ -560,33 +578,91 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 						<div class="wpbooklist-comments-actual-inner-scroll-nocomments-wrapper">
 							<p class="wpbooklist-comments-no-comments-yet">' . $this->trans->trans_41 . '</p>';
 
-				$comment_addition = '
-				</div>
-				<div class="wpbooklist-comments-add-comment-wrapper" style="box-shadow:none;">
-					<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
-					<div class="wpbooklist-comments-add-comment-actual-wrapper">
-						<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
-						<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
-						<select id="wpbooklist-comments-add-comment-rating-actual">
-							<option value="5">' . $this->trans->trans_10 . '</option>
-							<option value="4.5">' . $this->trans->trans_11 . '</option>
-							<option value="4">' . $this->trans->trans_12 . '</option>
-							<option value="3.5">' . $this->trans->trans_13 . '</option>
-							<option value="3">' . $this->trans->trans_14 . '</option>
-							<option value="2.5">' . $this->trans->trans_15 . '</option>
-							<option value="2">' . $this->trans->trans_16 . '</option>
-							<option value="1.5">' . $this->trans->trans_17 . '</option>
-							<option value="1">' . $this->trans->trans_18 . '</option>
-							<option value="0.5">' . $this->trans->trans_19 . '</option>
-						</select>
-						<img class="wpbooklist-comments-add-comment-rating-img" src="' . ROOT_IMG_URL . '4halfstar.jpg" />
+				// A conditional that will test for whether of not the user must be authenticated before displaying the 'Submit New Comment' HTML.
+				$comment_addition = '';
+				if ( 'everyone' === $comments_settings->restrictto ) {
+
+					$comment_addition = '
 					</div>
-					<div class="wpbooklist-comments-add-comment-submit-wrapper">
-						<button class="wpbooklist-comments-add-comment-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_39 . '</button>
-					</div>
-					<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
-					<div id="wpbooklist-colorbox-comments-response-div"></div>
-				</div>';
+					<div class="wpbooklist-comments-add-comment-wrapper">
+						<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+						<div class="wpbooklist-comments-add-comment-actual-wrapper">
+							<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
+							<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+							<select id="wpbooklist-comments-add-comment-rating-actual">
+								<option value="5">' . $this->trans->trans_10 . '</option>
+								<option value="4.5">' . $this->trans->trans_11 . '</option>
+								<option value="4">' . $this->trans->trans_12 . '</option>
+								<option value="3.5">' . $this->trans->trans_13 . '</option>
+								<option value="3">' . $this->trans->trans_14 . '</option>
+								<option value="2.5">' . $this->trans->trans_15 . '</option>
+								<option value="2">' . $this->trans->trans_16 . '</option>
+								<option value="1.5">' . $this->trans->trans_17 . '</option>
+								<option value="1">' . $this->trans->trans_18 . '</option>
+								<option value="0.5">' . $this->trans->trans_19 . '</option>
+							</select>
+							<img class="wpbooklist-comments-add-comment-rating-img" src="' . ROOT_IMG_URL . '4halfstar.jpg" />
+						</div>
+						<div class="wpbooklist-comments-add-comment-submit-wrapper">
+							<button class="wpbooklist-comments-add-comment-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_39 . '</button>
+						</div>
+						<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
+						<div id="wpbooklist-colorbox-comments-response-div"></div>
+					</div>';
+
+				} else {
+
+					// Determine if user is already logged in...
+					$current_user = wp_get_current_user();
+					if ( 0 !== $current_user->ID ) {
+
+						$comment_addition = '
+							</div>
+							<div class="wpbooklist-comments-add-comment-wrapper">
+								<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_37 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+								<div class="wpbooklist-comments-add-comment-actual-wrapper">
+									<textarea id="wpbooklist-comments-add-comment-actual" placeholder="' . $this->trans->trans_38 . '"></textarea>
+									<p class="wpbooklist-comments-add-comment-rating-title">' . $this->trans->trans_40 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+									<select id="wpbooklist-comments-add-comment-rating-actual">
+										<option value="5">' . $this->trans->trans_10 . '</option>
+										<option value="4.5">' . $this->trans->trans_11 . '</option>
+										<option value="4">' . $this->trans->trans_12 . '</option>
+										<option value="3.5">' . $this->trans->trans_13 . '</option>
+										<option value="3">' . $this->trans->trans_14 . '</option>
+										<option value="2.5">' . $this->trans->trans_15 . '</option>
+										<option value="2">' . $this->trans->trans_16 . '</option>
+										<option value="1.5">' . $this->trans->trans_17 . '</option>
+										<option value="1">' . $this->trans->trans_18 . '</option>
+										<option value="0.5">' . $this->trans->trans_19 . '</option>
+									</select>
+									<img class="wpbooklist-comments-add-comment-rating-img" src="' . ROOT_IMG_URL . '4halfstar.jpg" />
+								</div>
+								<div class="wpbooklist-comments-add-comment-submit-wrapper">
+									<button class="wpbooklist-comments-add-comment-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_39 . '</button>
+								</div>
+								<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
+								<div id="wpbooklist-colorbox-comments-response-div"></div>
+							</div>';
+
+					} else {
+
+						$comment_addition = '
+							</div>
+							<div class="wpbooklist-comments-add-comment-wrapper">
+								<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_71 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+								<div class="wpbooklist-comments-add-comment-actual-wrapper">
+									<input type="text" id="wpbooklist-comments-login-username-actual" placeholder="' . $this->trans->trans_72 . '"></textarea>
+									<input type="password" id="wpbooklist-comments-login-password-actual" placeholder="' . $this->trans->trans_73 . '"></textarea>
+								</div>
+								<div class="wpbooklist-comments-add-comment-submit-wrapper">
+									<button class="wpbooklist-comments-login-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_74 . '</button>
+								</div>
+								<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
+								<div id="wpbooklist-colorbox-comments-response-div"></div>
+							</div>';
+					}
+				}
+
 
 				$closing_html = '
 					</div>';
