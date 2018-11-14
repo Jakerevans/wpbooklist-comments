@@ -33,6 +33,225 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 			// Let's grab all comments from the DB that have a status of anything but Archived. Comments past a certain date (specified by the User on the 'Comment Settings' tab) will be archived. The function that changes a comment's status to 'archived' is in the class-wpbooklist-comment-settings-form.php file, and is ran from it's constructor.
 			$this->comments = $wpdb->get_results( 'SELECT * from ' . $wpdb->prefix . "wpbooklist_comments WHERE status != 'archived' ORDER BY status DESC" );
 
+			// Grab all the settings.
+			$this->comments_settings = $wpdb->get_row( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments_settings' );
+
+			// Build out various drop-down optioons based on saved settings.
+			$this->autoapprove_options = '';
+			switch ( $this->comments_settings->autoapprove ) {
+				case 'pending':
+						$this->autoapprove_options = '
+							<option selected >' . $this->trans->trans_44 . '</option>
+							<option>' . $this->trans->trans_45 . '</option>';
+					break;
+				case 'approve':
+						$this->autoapprove_options = '
+							<option>' . $this->trans->trans_44 . '</option>
+							<option selected >' . $this->trans->trans_45 . '</option>';
+					break;
+				default:
+						$this->autoapprove_options = '
+							<option selected >' . $this->trans->trans_44 . '</option>
+							<option>' . $this->trans->trans_45 . '</option>';
+					break;
+			}
+
+			// Build out various drop-down options based on saved settings.
+			$this->commentorder_options = '';
+			switch ( $this->comments_settings->commentorder ) {
+				case 'newfirst':
+						$this->commentorder_options = '
+							<option selected>' . $this->trans->trans_47 . '</option>
+										<option>' . $this->trans->trans_48 . '</option>
+										<option>' . $this->trans->trans_49 . '</option>
+										<option>' . $this->trans->trans_50 . '</option>';
+					break;
+				case 'oldfirst':
+						$this->commentorder_options = '
+							<option>' . $this->trans->trans_47 . '</option>
+										<option selected>' . $this->trans->trans_48 . '</option>
+										<option>' . $this->trans->trans_49 . '</option>
+										<option>' . $this->trans->trans_50 . '</option>';
+					break;
+				case 'mostlikes':
+						$this->commentorder_options = '
+							<option>' . $this->trans->trans_47 . '</option>
+										<option>' . $this->trans->trans_48 . '</option>
+										<option selected>' . $this->trans->trans_49 . '</option>
+										<option>' . $this->trans->trans_50 . '</option>';
+					break;
+				case 'leastlikes':
+						$this->commentorder_options = '
+							<option>' . $this->trans->trans_47 . '</option>
+										<option>' . $this->trans->trans_48 . '</option>
+										<option>' . $this->trans->trans_49 . '</option>
+										<option selected>' . $this->trans->trans_50 . '</option>';
+					break;
+				default:
+						$this->commentorder_options = '
+							<option selected>' . $this->trans->trans_47 . '</option>
+										<option>' . $this->trans->trans_48 . '</option>
+										<option>' . $this->trans->trans_49 . '</option>
+										<option>' . $this->trans->trans_50 . '</option>';
+					break;
+			}
+
+			// Build out various drop-down options based on saved settings.
+			$this->archiveafter_options = '';
+			switch ( $this->comments_settings->archiveafter ) {
+				case '30':
+						$this->archiveafter_options = '
+							<option selected>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+				case '60':
+						$this->archiveafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option selected>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+				case '90':
+						$this->archiveafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option selected>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+				case '180':
+						$this->archiveafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option selected>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+				case '364':
+						$this->archiveafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option selected>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+				case '0':
+						$this->archiveafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option selected>' . $this->trans->trans_57 . '</option>';
+					break;
+				default:
+						$this->archiveafter_options = '
+							<option selected>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_57 . '</option>';
+					break;
+			}
+
+			// Build out various drop-down options based on saved settings.
+			$this->deleteafter_options = '';
+			switch ( $this->comments_settings->deleteafter ) {
+				case '30':
+						$this->deleteafter_options = '
+							<option selected>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+				case '60':
+						$this->deleteafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option selected>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+				case '90':
+						$this->deleteafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option selected>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+				case '180':
+						$this->deleteafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option selected>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+				case '364':
+						$this->deleteafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option selected>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+				case '0':
+						$this->deleteafter_options = '
+							<option>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option selected>' . $this->trans->trans_64 . '</option>';
+					break;
+				default:
+						$this->deleteafter_options = '
+							<option selected>' . $this->trans->trans_52 . '</option>
+										<option>' . $this->trans->trans_53 . '</option>
+										<option>' . $this->trans->trans_54 . '</option>
+										<option>' . $this->trans->trans_55 . '</option>
+										<option>' . $this->trans->trans_56 . '</option>
+										<option>' . $this->trans->trans_64 . '</option>';
+					break;
+			}
+
+			// Build out various drop-down optioons based on saved settings.
+			$this->restrictto_options = '';
+			switch ( $this->comments_settings->restrictto ) {
+				case 'everyone':
+						$this->restrictto_options = '
+							<option selected>' . $this->trans->trans_69 . '</option>
+										<option>' . $this->trans->trans_70 . '</option>';
+					break;
+				case 'authenticated':
+						$this->restrictto_options = '
+							<option>' . $this->trans->trans_69 . '</option>
+										<option selected>' . $this->trans->trans_70 . '</option>';
+					break;
+				default:
+						$this->restrictto_options = '
+							<option selected>' . $this->trans->trans_69 . '</option>
+										<option>' . $this->trans->trans_70 . '</option>';
+					break;
+			}
+
 		}
 
 		/**
@@ -51,18 +270,14 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									<img class="wpbooklist-icon-image-question" data-label="book-form-rating" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-rating">' . $this->trans->trans_43 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-newcomment-behavior">
-										<option>' . $this->trans->trans_44 . '</option>
-										<option>' . $this->trans->trans_45 . '</option>
+										' . $this->autoapprove_options . '
 									</select>
 								</div>
 								<div class="wpbooklist-book-form-indiv-attribute-container">
 									<img class="wpbooklist-icon-image-question" data-label="book-form-outofprint" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-outofprint">' . $this->trans->trans_46 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-display-order">
-										<option>' . $this->trans->trans_47 . '</option>
-										<option>' . $this->trans->trans_48 . '</option>
-										<option>' . $this->trans->trans_49 . '</option>
-										<option>' . $this->trans->trans_50 . '</option>
+										' . $this->commentorder_options . '
 									</select>
 								</div>
 							</div>
@@ -71,24 +286,21 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									<img class="wpbooklist-icon-image-question" data-label="book-form-finished" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_51 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-archive-after">
-										<option>' . $this->trans->trans_52 . '</option>
-										<option>' . $this->trans->trans_53 . '</option>
-										<option>' . $this->trans->trans_54 . '</option>
-										<option>' . $this->trans->trans_55 . '</option>
-										<option>' . $this->trans->trans_56 . '</option>
-										<option>' . $this->trans->trans_57 . '</option>
+										' . $this->archiveafter_options . '
 									</select>
 								</div>
 								<div class="wpbooklist-book-form-indiv-attribute-container">
 									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_58 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-delete-after">
-										<option>' . $this->trans->trans_59 . '</option>
-										<option>' . $this->trans->trans_60 . '</option>
-										<option>' . $this->trans->trans_61 . '</option>
-										<option>' . $this->trans->trans_62 . '</option>
-										<option>' . $this->trans->trans_63 . '</option>
-										<option>' . $this->trans->trans_64 . '</option>
+										' . $this->deleteafter_options . '
+									</select>
+								</div>
+								<div class="wpbooklist-book-form-indiv-attribute-container">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
+									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_68 . '</label>
+									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-restrict-to">
+										' . $this->restrictto_options . '
 									</select>
 								</div>
 							</div>

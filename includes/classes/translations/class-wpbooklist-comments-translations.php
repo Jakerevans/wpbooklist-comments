@@ -96,6 +96,14 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_65 = __( 'Thanks for your Rating & Comment!', 'wpbooklist-textdomain' );
 			$this->trans_66 = __( 'Archived', 'wpbooklist-textdomain' );
 			$this->trans_67 = __( 'You\'ve saved your settings!', 'wpbooklist-textdomain' );
+			$this->trans_68 = __( 'Restrict Comments To...', 'wpbooklist-textdomain' );
+			$this->trans_69 = __( 'Everyone', 'wpbooklist-textdomain' );
+			$this->trans_70 = __( 'Logged-in Users Only', 'wpbooklist-textdomain' );
+			$this->trans_71 = __( 'Log in to Comment', 'wpbooklist-textdomain' );
+			$this->trans_72 = __( 'Username / E-Mail', 'wpbooklist-textdomain' );
+			$this->trans_73 = __( 'Password', 'wpbooklist-textdomain' );
+			$this->trans_74 = __( 'Log In', 'wpbooklist-textdomain' );
+			$this->trans_75 = __( 'You\'re Logged in! The Page Will now Reload.' , 'wpbooklist-textdomain' );
 
 
 			// The array of translation strings.
@@ -167,6 +175,14 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 				'trans65' => $this->trans_65,
 				'trans66' => $this->trans_66,
 				'trans67' => $this->trans_67,
+				'trans68' => $this->trans_68,
+				'trans69' => $this->trans_69,
+				'trans70' => $this->trans_70,
+				'trans71' => $this->trans_71,
+				'trans72' => $this->trans_72,
+				'trans73' => $this->trans_73,
+				'trans74' => $this->trans_74,
+				'trans75' => $this->trans_75,
 			);
 
 			return $translation_array;

@@ -56,7 +56,6 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 				} else {
 					$commentsarrive = 'approve';
 				}
-
 			}
 
 			if ( isset( $_POST['displayorder'] ) ) {
@@ -106,16 +105,28 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 				}
 			}
 
+			if ( isset( $_POST['restrictto'] ) ) {
+				$restrictto = filter_var( wp_unslash( $_POST['restrictto'] ), FILTER_SANITIZE_STRING );
+
+				if ( $this->trans->trans_69 === $restrictto ) {
+					$restrictto = 'everyone';
+				} else {
+					$restrictto = 'authenticated';
+				}
+			}
+
 			// Now we'll save the comment.
 			$settings_array = array(
 				'autoapprove'  => $commentsarrive,
 				'commentorder' => $displayorder,
 				'archiveafter' => $archiveafter,
 				'deleteafter'  => $deleteafter,
+				'restrictto'   => $restrictto,
 			);
 
 			// Building mask array to add to DB.
 			$db_mask_insert_array = array(
+				'%s',
 				'%s',
 				'%s',
 				'%s',
@@ -143,11 +154,11 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 			}
 
 			if ( isset( $_POST['newlikes'] ) ) {
-				$newlikes  = filter_var( wp_unslash( $_POST['newlikes'] ), FILTER_SANITIZE_NUMBER_INT );
+				$newlikes = filter_var( wp_unslash( $_POST['newlikes'] ), FILTER_SANITIZE_NUMBER_INT );
 			}
 
 			if ( isset( $_POST['bookuid'] ) ) {
-				$bookuid  = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+				$bookuid = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
 			}
 
 			$data         = array(
@@ -164,6 +175,40 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 
 			// End the function.
 			wp_die( ' Like DB result is ' . $result . ' and Transient deletion is ' . $transient_delete_api_data_result );
+
+		}
+
+		/**
+		 * Callback function for that allows the user to log in from the Comments section.
+		 */
+		public function wpbooklist_comments_login_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_login_action_callback', 'security' );
+
+			if ( isset( $_POST['username'] ) ) {
+				$username = filter_var( wp_unslash( $_POST['username'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['password'] ) ) {
+				$password = filter_var( wp_unslash( $_POST['password'] ), FILTER_SANITIZE_STRING );
+			}
+
+			$creds = array(
+				'user_login'    => $username,
+				'user_password' => $password,
+				'remember'      => true,
+			);
+
+			$user = wp_signon( $creds, false );
+			$response = '';
+			if ( is_wp_error( $user ) ) {
+				$response = $user->get_error_message();
+			}
+
+			// End the function.
+			wp_die( $response );
 
 		}
 
