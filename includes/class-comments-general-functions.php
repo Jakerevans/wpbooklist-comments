@@ -252,6 +252,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				archiveafter varchar(255),
 				deleteafter varchar(255),
 				restrictto varchar(255),
+				allowregistration varchar(255),
 				PRIMARY KEY  (ID),
 				KEY autoapprove (autoapprove)
 			) $charset_collate; ";
@@ -322,11 +323,13 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 							// Set the current WordPress user.
 							$user      = get_user_by( 'ID', $comment->submitter );
-							$submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name . ' - ';
+							if ( is_object( $user ) ) {
+								$submitter = $this->trans->trans_35 . ' ' . $user->first_name . ' ' . $user->last_name . ' - ';
 
-							// If user didn't have a first or last name specified...
-							if ( $this->trans->trans_35 . '   - ' === $submitter ) {
-								$submitter = $this->trans->trans_35 . ' ' . $user->display_name . ' - ';
+								// If user didn't have a first or last name specified...
+								if ( $this->trans->trans_35 . '   - ' === $submitter ) {
+									$submitter = $this->trans->trans_35 . ' ' . $user->display_name . ' - ';
+								}
 							}
 						}
 
@@ -536,6 +539,27 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 					} else {
 
+						$registration_string = '';
+						if ( 'yes' === $comments_settings->allowregistration ) {
+							$registration_string = '
+								<div class="wpbooklist-comments-register-user-wrapper">
+									<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_80 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+									<div class="wpbooklist-comments-add-comment-actual-wrapper">
+										<input type="text" id="wpbooklist-comments-register-username-actual" placeholder="' . $this->trans->trans_81 . '"></textarea>
+										<input type="text" id="wpbooklist-comments-register-usernameverify-actual" placeholder="' . $this->trans->trans_82 . '"></textarea>
+									</div>
+									<div class="wpbooklist-comments-add-comment-actual-wrapper">
+										<input type="password" id="wpbooklist-comments-register-password-actual" placeholder="' . $this->trans->trans_83 . '"></textarea>
+										<input type="password" id="wpbooklist-comments-register-passwordverify-actual" placeholder="' . $this->trans->trans_84 . '"></textarea>
+									</div>
+									<div class="wpbooklist-comments-add-comment-submit-wrapper">
+										<button class="wpbooklist-comments-register-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_85 . '</button>
+									</div>
+									<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments-register"></div>
+									<div id="wpbooklist-colorbox-comments-register-response-div"></div>
+								</div>';
+						}
+
 						$comment_addition = '
 							</div>
 							<div class="wpbooklist-comments-add-comment-wrapper">
@@ -549,6 +573,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 								</div>
 								<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
 								<div id="wpbooklist-colorbox-comments-response-div"></div>
+								' . $registration_string . '
 							</div>';
 					}
 				}
@@ -558,16 +583,6 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 				$final_html = $opening_html . $totals_html . $comments_html . $comment_addition . $closing_html;
 			} else {
-
-
-
-
-
-
-
-
-
-
 
 				// If there are no Comments, just output the 'Add a Comment' Section.
 				$opening_html = '
@@ -581,6 +596,27 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				// A conditional that will test for whether of not the user must be authenticated before displaying the 'Submit New Comment' HTML.
 				$comment_addition = '';
 				if ( 'everyone' === $comments_settings->restrictto ) {
+
+					$registration_string = '';
+					if ( 'yes' === $comments_settings->allowregistration ) {
+						$registration_string = '
+								<div class="wpbooklist-comments-register-user-wrapper">
+									<p class="wpbooklist-comments-add-comment-title">' . $this->trans->trans_80 . '</p><span class="wpbooklist-comments-for-php-string-mod" style="display:none"></span>
+									<div class="wpbooklist-comments-add-comment-actual-wrapper">
+										<input type="text" id="wpbooklist-comments-register-username-actual" placeholder="' . $this->trans->trans_81 . '"></textarea>
+										<input type="text" id="wpbooklist-comments-register-usernameverify-actual" placeholder="' . $this->trans->trans_82 . '"></textarea>
+									</div>
+									<div class="wpbooklist-comments-add-comment-actual-wrapper">
+										<input type="password" id="wpbooklist-comments-register-password-actual" placeholder="' . $this->trans->trans_83 . '"></textarea>
+										<input type="password" id="wpbooklist-comments-register-passwordverify-actual" placeholder="' . $this->trans->trans_84 . '"></textarea>
+									</div>
+									<div class="wpbooklist-comments-add-comment-submit-wrapper">
+										<button class="wpbooklist-comments-register-submit-button" data-title="' . $comments_array[3] . '" data-bookid="' . $comments_array[0] . '" data-library="' . $comments_array[1] . '" data-bookuid="' . $comments_array[2] . '">' . $this->trans->trans_85 . '</button>
+									</div>
+									<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments-register"></div>
+									<div id="wpbooklist-colorbox-comments-register-response-div"></div>
+								</div>';
+					}
 
 					$comment_addition = '
 					</div>
@@ -608,6 +644,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 						</div>
 						<div class="wpbooklist-spinner" id="wpbooklist-spinner-comments"></div>
 						<div id="wpbooklist-colorbox-comments-response-div"></div>
+						' . $registration_string . '
 					</div>';
 
 				} else {

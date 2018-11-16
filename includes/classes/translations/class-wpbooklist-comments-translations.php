@@ -105,6 +105,24 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_74 = __( 'Log In', 'wpbooklist-textdomain' );
 			$this->trans_75 = __( 'You\'re Logged in! The Page Will now Reload.' , 'wpbooklist-textdomain' );
 			$this->trans_76 = __( 'Whoops! Looks Like your Username or Password were entered incorrectly! Please try again.' , 'wpbooklist-textdomain' );
+			$this->trans_77 = __( 'Allow User Registration?', 'wpbooklist-textdomain' );
+			$this->trans_78 = __( 'Yes', 'wpbooklist-textdomain' );
+			$this->trans_79 = __( 'No', 'wpbooklist-textdomain' );
+			$this->trans_80 = __( 'Not a User Yet? Register Below to Comment:', 'wpbooklist-textdomain' );
+			$this->trans_81 = __( 'Enter E-Mail Address', 'wpbooklist-textdomain' );
+			$this->trans_82 = __( 'Verify E-Mail Address', 'wpbooklist-textdomain' );
+			$this->trans_83 = __( 'Enter Password', 'wpbooklist-textdomain' );
+			$this->trans_84 = __( 'Verify Password', 'wpbooklist-textdomain' );
+			$this->trans_85 = __( 'Register', 'wpbooklist-textdomain' );
+			$this->trans_86 = __( 'Whoops! Looks like you forgot to enter an E-Mail Address!', 'wpbooklist-textdomain' );
+			$this->trans_87 = __( 'Whoops! Looks like you forgot to verify your E-Mail Address! Please enter your E-Mail address again.', 'wpbooklist-textdomain' );
+			$this->trans_88 = __( 'Whoops! Looks like you forgot to enter a password', 'wpbooklist-textdomain' );
+			$this->trans_89 = __( 'Whoops! Looks like you forgot to verify your password! Please enter your password again.', 'wpbooklist-textdomain' );
+			$this->trans_90 = __( 'Whoops! Looks like your E-Mail Addresses Don\'t match!', 'wpbooklist-textdomain' );
+			$this->trans_91 = __( 'Whoops! Looks like your Passwords Don\'t match!', 'wpbooklist-textdomain' );
+			$this->trans_92 = __( 'Whoops! Looks like there\'s already a registered user with this E-Mail address! Try using a different E-Mail Address.', 'wpbooklist-textdomain' );
+			$this->trans_93 = __( 'You\'re now a Registered User! Reload the page to leave your Comment.', 'wpbooklist-textdomain' );
+			$this->trans_94 = __( 'Thanks for your Rating & Comment! An Admin will review your submission shortly.', 'wpbooklist-textdomain' );
 
 			// The array of translation strings.
 			$translation_array = array(
@@ -184,6 +202,24 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 				'trans74' => $this->trans_74,
 				'trans75' => $this->trans_75,
 				'trans76' => $this->trans_76,
+				'trans77' => $this->trans_77,
+				'trans78' => $this->trans_78,
+				'trans79' => $this->trans_79,
+				'trans80' => $this->trans_80,
+				'trans81' => $this->trans_81,
+				'trans82' => $this->trans_82,
+				'trans83' => $this->trans_83,
+				'trans84' => $this->trans_84,
+				'trans85' => $this->trans_85,
+				'trans86' => $this->trans_86,
+				'trans87' => $this->trans_87,
+				'trans88' => $this->trans_88,
+				'trans89' => $this->trans_89,
+				'trans90' => $this->trans_90,
+				'trans91' => $this->trans_91,
+				'trans92' => $this->trans_92,
+				'trans93' => $this->trans_93,
+				'trans94' => $this->trans_94,
 			);
 
 			return $translation_array;

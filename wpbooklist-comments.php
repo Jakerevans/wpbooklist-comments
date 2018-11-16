@@ -135,6 +135,7 @@ global $wpdb;
 			'adminnonce6' => 'wpbooklist_comments_maniparchived_action_callback',
 			'adminnonce7' => 'wpbooklist_comments_submit_settings_action_callback',
 			'adminnonce8' => 'wpbooklist_comments_login_action_callback',
+			'adminnonce9' => 'wpbooklist_comments_register_action_callback',
 		))
 	);
 
@@ -210,6 +211,9 @@ global $wpdb;
 	// Function that allows the user to log in from the Comments section.
 	add_action( 'wp_ajax_wpbooklist_comments_login_action', array( $comments_ajax_functions, 'wpbooklist_comments_login_action_callback' ) );
 	add_action( 'wp_ajax_nopriv_wpbooklist_comments_login_action', array( $comments_ajax_functions, 'wpbooklist_comments_login_action_callback' ) );
+
+	// Function that allows the user to register from the Comments section.
+	add_action( 'wp_ajax_nopriv_wpbooklist_comments_register_action', array( $comments_ajax_functions, 'wpbooklist_comments_register_action_callback' ) );
 
 	// For submitting a new comment.
 	add_action( 'wp_ajax_wpbooklist_comments_submit_action', array( $comments_ajax_functions, 'wpbooklist_comments_submit_action_callback' ) );

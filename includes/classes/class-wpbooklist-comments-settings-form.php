@@ -252,6 +252,26 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 					break;
 			}
 
+			// Build out various drop-down optioons based on saved settings.
+			$this->allowregistration_options = '';
+			switch ( $this->comments_settings->allowregistration ) {
+				case 'yes':
+						$this->allowregistration_options = '
+							<option selected>' . $this->trans->trans_78 . '</option>
+										<option>' . $this->trans->trans_79 . '</option>';
+					break;
+				case 'no':
+						$this->allowregistration_options = '
+							<option>' . $this->trans->trans_78 . '</option>
+										<option selected>' . $this->trans->trans_79 . '</option>';
+					break;
+				default:
+						$this->allowregistration_options = '
+							<option selected>' . $this->trans->trans_78 . '</option>
+										<option>' . $this->trans->trans_79 . '</option>';
+					break;
+			}
+
 		}
 
 		/**
@@ -280,8 +300,6 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 										' . $this->commentorder_options . '
 									</select>
 								</div>
-							</div>
-							<div class="wpbooklist-book-form-inner-container-dropdown-fields-row" style="margin:20px;">
 								<div class="wpbooklist-book-form-indiv-attribute-container">
 									<img class="wpbooklist-icon-image-question" data-label="book-form-finished" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_51 . '</label>
@@ -301,6 +319,13 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_68 . '</label>
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-restrict-to">
 										' . $this->restrictto_options . '
+									</select>
+								</div>
+								<div class="wpbooklist-book-form-indiv-attribute-container">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
+									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_77 . '</label>
+									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-allow-registration">
+										' . $this->allowregistration_options . '
 									</select>
 								</div>
 							</div>

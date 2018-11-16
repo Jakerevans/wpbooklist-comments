@@ -99,7 +99,7 @@
     margin: 5px auto;
 }
 
-#colorbox #wpbooklist-colorbox-comments-response-div, #wpbooklist-colorbox-comments-response-div{
+#colorbox #wpbooklist-colorbox-comments-response-div, #wpbooklist-colorbox-comments-response-div, #colorbox  #wpbooklist-colorbox-comments-register-response-div, #wpbooklist-colorbox-comments-register-response-div{
 	margin-left: auto;
     margin-right: auto;
     width: auto;
@@ -139,3 +139,7 @@
     margin-bottom:10px;
 }
 // END OF COLORBOX CSS //
+
+#wpbl-pagetd-book-comments-contents .wpbooklist-comments-register-user-wrapper h5{
+    margin-top:0px;
+}

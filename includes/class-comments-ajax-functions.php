@@ -115,17 +115,29 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 				}
 			}
 
+			if ( isset( $_POST['allowregistration'] ) ) {
+				$allowregistration = filter_var( wp_unslash( $_POST['allowregistration'] ), FILTER_SANITIZE_STRING );
+
+				if ( $this->trans->trans_78 === $allowregistration ) {
+					$allowregistration = 'yes';
+				} else {
+					$allowregistration = 'no';
+				}
+			}
+
 			// Now we'll save the comment.
 			$settings_array = array(
-				'autoapprove'  => $commentsarrive,
-				'commentorder' => $displayorder,
-				'archiveafter' => $archiveafter,
-				'deleteafter'  => $deleteafter,
-				'restrictto'   => $restrictto,
+				'autoapprove'       => $commentsarrive,
+				'commentorder'      => $displayorder,
+				'archiveafter'      => $archiveafter,
+				'deleteafter'       => $deleteafter,
+				'restrictto'        => $restrictto,
+				'allowregistration' => $allowregistration,
 			);
 
 			// Building mask array to add to DB.
 			$db_mask_insert_array = array(
+				'%s',
 				'%s',
 				'%s',
 				'%s',
@@ -210,6 +222,111 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 			// End the function.
 			wp_die( $response );
 
+		}
+
+		/**
+		 * Callback function for that allows the user to log in from the Comments section.
+		 */
+		public function wpbooklist_comments_register_action_callback() {
+
+			global $wpdb;
+
+			check_ajax_referer( 'wpbooklist_comments_register_action_callback', 'security' );
+
+			if ( isset( $_POST['username'] ) ) {
+				$username = filter_var( wp_unslash( $_POST['username'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['password'] ) ) {
+				$password = filter_var( wp_unslash( $_POST['password'] ), FILTER_SANITIZE_STRING );
+			}
+
+			// If the proposed Username and/or E-Mail address already exists, inform user and terminate.
+			$error   = '';
+			$user_id = username_exists( $username );
+			if ( $user_id ) {
+				$error = 'Username Exists';
+				wp_die( $error );
+			}
+			if ( email_exists( $username ) ) {
+				$error = 'E-Mail Exists';
+				wp_die( $error );
+			}
+
+			// If Username/E-Mail aren't taken, create the WordPress User.
+			if ( ! $user_id && false === email_exists( $username ) ) {
+
+				$user_id = wp_create_user( $username, $password, $username );
+
+				// If there wasn't an error creating the WordPress User...
+				if ( ! is_wp_error( $user_id ) ) {
+
+					// Set user's role to our custom WPBookList Basic User.
+					$user = get_user_by( 'id', $user_id );
+					$user->set_role( 'wpbooklist_basic_user' );
+
+					// Now let's add data to our custom WPBookList Users table.
+					$firstname     = '';
+					$lastname      = '';
+					$wpuserid      = $user_id;
+					$librarystring = '';
+
+					// Create the permissions string - user get's no permissions from registering just to comment.
+					$permissions = 'No-No-No-No-No';
+
+					$users_save_array = array(
+						'firstname'   => $firstname,
+						'lastname'    => $lastname,
+						'email'       => $username,
+						'username'    => $username,
+						'permissions' => $permissions,
+						'wpuserid'    => $wpuserid,
+						'datecreated' => $this->date,
+						'libraries'   => $librarystring,
+					);
+
+					// Requiring & Calling the file/class that will insert or update our data.
+					require_once CLASS_USERS_DIR . 'class-wpbooklist-save-users-data.php';
+					$save_class      = new WPBOOKLIST_Save_Users_Data( $users_save_array );
+					$db_write_result = $save_class->wpbooklist_jre_save_users_actual();
+
+					// Build array of values to return to browser.
+					$return_array = array(
+						$db_write_result,
+						$save_class->dbmode,
+						$save_class->email,
+						$save_class->wpuserid,
+						$save_class->last_query,
+						$save_class->transients_deleted,
+						wp_json_encode( $save_class->users_save_array ),
+					);
+
+					// Now log the user in if both the Core WordPress User Creation, and our custom WPBookList User Creation was successful.
+					$response = '';
+					if ( 1 === $db_write_result ) {
+
+						$creds = array(
+							'user_login'    => $username,
+							'user_password' => $password,
+							'remember'      => true,
+						);
+
+						// Log the User in
+						$user = wp_signon( $creds, false );
+						if ( is_wp_error( $user ) ) {
+							$response = $user->get_error_message();
+							wp_die( $response );
+						} else {
+							wp_die( 'Success all around!' );
+						}
+
+					} else {
+						wp_die( 'Unknown Error Trying to create custom WPBookList User' );
+					}
+				} else {
+					wp_die( 'Unknown Error Trying to create Core WordPress User via wp_create_user() function.' );
+				}
+			}
 		}
 
 		/**
