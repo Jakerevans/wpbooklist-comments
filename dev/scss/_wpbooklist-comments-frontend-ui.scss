@@ -68,7 +68,7 @@
 }
 
 .wpbooklist-comments-add-comment-rating-title, .wpbooklist-comments-add-comment-title{
-	margin-bottom:0px;
+	margin-bottom:10px;
 	font-weight: bold;
 }
 
@@ -104,7 +104,6 @@
     margin-right: auto;
     width: auto;
     height: 30px;
-    font-size:12px;
 }
 
 .wpbooklist-comments-no-comments-yet{
@@ -131,15 +130,31 @@
 
 #wpbl-pagetd-book-comments-div, .wpbooklist-comments-username-p, #wpbl-posttd-book-comments-div, .wpbooklist-comments-username-p, #wpbl-pagetd-book-comments-div .wpbooklist-comments-total-likes-p, #wpbl-posttd-book-comments-div .wpbooklist-comments-total-likes-p{
     font-weight:normal;
-    font-size:13px;
 }
 
 .wpbooklist-comments-add-comment-actual-wrapper input{
     margin-top:10px;
     margin-bottom:10px;
 }
+
+#colorbox .wpbooklist-comments-actual-wrapper label{
+    font-size:12px;
+}
+
+.wpbooklist-comments-add-comment-wrapper input{
+    margin-top:0px;
+}
+
+.wpbooklist-comments-add-registerurl{
+    display:block;
+}
 // END OF COLORBOX CSS //
 
 #wpbl-pagetd-book-comments-contents .wpbooklist-comments-register-user-wrapper h5{
     margin-top:0px;
+}
+
+#wpbl-posttd-right-row .wpbooklist-comments-register-user-wrapper h5, #wpbl-pagetd-right-row .wpbooklist-comments-register-user-wrapper h5{
+    margin-top:0px;
+    padding-top:0px;
 }

@@ -123,6 +123,9 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 			$this->trans_92 = __( 'Whoops! Looks like there\'s already a registered user with this E-Mail address! Try using a different E-Mail Address.', 'wpbooklist-textdomain' );
 			$this->trans_93 = __( 'You\'re now a Registered User! Reload the page to leave your Comment.', 'wpbooklist-textdomain' );
 			$this->trans_94 = __( 'Thanks for your Rating & Comment! An Admin will review your submission shortly.', 'wpbooklist-textdomain' );
+			$this->trans_95 = __( 'Message to User', 'wpbooklist-textdomain' );
+			$this->trans_96 = __( 'Registration Page URL', 'wpbooklist-textdomain' );
+			$this->trans_97 = __( 'Registration Link Text', 'wpbooklist-textdomain' );
 
 			// The array of translation strings.
 			$translation_array = array(
@@ -220,6 +223,9 @@ if ( ! class_exists( 'WPBookList_Comments_Translations', false ) ) :
 				'trans92' => $this->trans_92,
 				'trans93' => $this->trans_93,
 				'trans94' => $this->trans_94,
+				'trans95' => $this->trans_95,
+				'trans96' => $this->trans_96,
+				'trans97' => $this->trans_97,
 			);
 
 			return $translation_array;

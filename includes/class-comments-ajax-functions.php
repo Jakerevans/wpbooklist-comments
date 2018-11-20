@@ -125,18 +125,49 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 				}
 			}
 
+			if ( isset( $_POST['usermessage'] ) ) {
+				$usermessage = filter_var( wp_unslash( $_POST['usermessage'] ), FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['registrationurl'] ) ) {
+				$registrationurl = filter_var( wp_unslash( $_POST['registrationurl'] ), FILTER_SANITIZE_STRING );
+
+				if ( false === stripos( $registrationurl, 'http://' ) && false === stripos( $registrationurl, 'https://' ) ) {
+					// Checking $protocol in HTTP or HTTPS.
+					if ( isset( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] ) {
+						// This is HTTPS.
+						$protocol = 'https';
+					} else {
+						// This is HTTP.
+						$protocol = 'http';
+					}
+
+					$registrationurl = $protocol . '://' . $registrationurl;
+				}
+			}
+
+			if ( isset( $_POST['registrationurltext'] ) ) {
+				$registrationurltext = filter_var( wp_unslash( $_POST['registrationurltext'] ), FILTER_SANITIZE_STRING );
+			}
+
 			// Now we'll save the comment.
 			$settings_array = array(
-				'autoapprove'       => $commentsarrive,
-				'commentorder'      => $displayorder,
-				'archiveafter'      => $archiveafter,
-				'deleteafter'       => $deleteafter,
-				'restrictto'        => $restrictto,
-				'allowregistration' => $allowregistration,
+				'autoapprove'         => $commentsarrive,
+				'commentorder'        => $displayorder,
+				'archiveafter'        => $archiveafter,
+				'deleteafter'         => $deleteafter,
+				'restrictto'          => $restrictto,
+				'allowregistration'   => $allowregistration,
+				'usermessage'         => $usermessage,
+				'registerurl'     => $registrationurl,
+				'registerurltext' => $registrationurltext,
 			);
 
 			// Building mask array to add to DB.
 			$db_mask_insert_array = array(
+				'%s',
+				'%s',
+				'%s',
 				'%s',
 				'%s',
 				'%s',

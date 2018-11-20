@@ -283,8 +283,7 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 
 			$string1 = '<p class="wpbooklist-tab-intro-para">' . $this->trans->trans_42 . '</p>';
 
-			
-			$string2 = '<div class="wpbooklist-book-form-inner-container-dropdown-fields" style="margin-top:10px;">
+			$string2 = '<div class="wpbooklist-book-form-inner-container-dropdown-fields wpbooklist-comments-wrapper" style="margin-top:10px;">
 							<div class="wpbooklist-book-form-inner-container-dropdown-fields-row" style="margin:20px;">
 								<div class="wpbooklist-book-form-indiv-attribute-container">
 									<img class="wpbooklist-icon-image-question" data-label="book-form-rating" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
@@ -327,6 +326,21 @@ if ( ! class_exists( 'WPBookList_Comments_Form', false ) ) :
 									<select class="wpbooklist-addbook-select-default" id="wpbooklist-comments-allow-registration">
 										' . $this->allowregistration_options . '
 									</select>
+								</div>
+								<div class="wpbooklist-book-form-indiv-attribute-container">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
+									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_95 . '</label>
+									<textarea style="display:block;" class="wpbooklist-addbook-select-default" id="wpbooklist-comments-user-messager">' . $this->comments_settings->usermessage . '</textarea>
+								</div>
+								<div class="wpbooklist-book-form-indiv-attribute-container">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
+									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_96 . '</label>
+									<input value="' . $this->comments_settings->registerurl . '" style="display:block;" type="text" class="wpbooklist-addbook-select-default" id="wpbooklist-comments-registration-url" />
+								</div>
+								<div class="wpbooklist-book-form-indiv-attribute-container">
+									<img class="wpbooklist-icon-image-question" data-label="book-form-signed" src="' . ROOT_IMG_ICONS_URL . 'question-black.svg">
+									<label class="wpbooklist-question-icon-label" for="book-form-finshed">' . $this->trans->trans_97 . '</label>
+									<input value="' . $this->comments_settings->registerurltext . '" style="display:block;" type="text" class="wpbooklist-addbook-select-default" id="wpbooklist-comments-registration-url-text" />
 								</div>
 							</div>
 							<button class="wpbooklist-response-success-fail-button wpbooklist-admin-editbook-edit-button" type="button" id="wpbooklist-comments-save-settings">' . $this->trans->trans_8 . '</button>
