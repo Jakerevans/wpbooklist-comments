@@ -474,6 +474,10 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 				$commentactual = filter_var( wp_unslash( $_POST['commentactual'] ), FILTER_SANITIZE_STRING );
 			}
 
+			if ( isset( $_POST['bookuid'] ) ) {
+				$bookuid = filter_var( wp_unslash( $_POST['bookuid'] ), FILTER_SANITIZE_STRING );
+			}
+
 			$data         = array(
 				'comment' => $commentactual,
 				'rating'  => $rating,
@@ -486,7 +490,7 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 			$result = $wpdb->update( $wpdb->prefix . 'wpbooklist_comments', $data, $where, $format, $where_format );
 
 			// Now attempting to delete the existing Transient for this comment, as the data has changed.
-			$transient_name = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $bookuid );
+			$transient_name = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments WHERE bookuid = ' . $bookuid );
 			$transient_delete_api_data_result = $this->transients->delete_transient( $transient_name );
 
 			// End the function.

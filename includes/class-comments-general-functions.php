@@ -285,7 +285,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 			if ( $transient_exists ) {
 				$all_comments = $transient_exists;
 			} else {
-				$query = $wpdb->prepare( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = %s', $comments_array[2] );
+				$query = $wpdb->prepare( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments WHERE bookuid = %s', $comments_array[2] );
 				$all_comments = $this->transients->create_transient( $transient_name, 'wpdb->get_results', $query, MONTH_IN_SECONDS );
 			}
 
