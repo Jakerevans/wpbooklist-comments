@@ -34,6 +34,19 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 		}
 
+		/**
+		 * Verifies that the core WPBookList plugin is installed and activated - otherwise, the Extension doesn't load and a message is displayed to the user.
+		 */
+		public function wpbooklist_comments_core_plugin_required() {
+
+			// Require core WPBookList Plugin.
+			if ( ! is_plugin_active( 'wpbooklist/wpbooklist.php' ) && current_user_can( 'activate_plugins' ) ) {
+
+				// Stop activation redirect and show error.
+				wp_die( 'Whoops! This WPBookList Extension requires the Core WPBookList Plugin to be installed and activated! <br><a target="_blank" href="https://wordpress.org/plugins/wpbooklist/">Download WPBookList Here!</a><br><br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>');
+			}
+		}
+
 
 		/** Functions that loads up the menu page entry for this Extension.
 		 *
@@ -77,9 +90,9 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				$split_string = explode( 'comments', $existing_string->extensionversions );
 				$first_part   = $split_string[0];
 				$last_part    = substr( $split_string[1], 5 );
-				$new_string   = $first_part . 'comments' . COMMENTS_VERSION_NUM . $last_part;
+				$new_string   = $first_part . 'comments' . WPBOOKLIST_COMMENTS_VERSION_NUM . $last_part;
 			} else {
-				$new_string = $existing_string->extensionversions . 'comments' . COMMENTS_VERSION_NUM;
+				$new_string = $existing_string->extensionversions . 'comments' . WPBOOKLIST_COMMENTS_VERSION_NUM;
 			}
 
 			$data         = array(
@@ -107,7 +120,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 				$version      = substr( $split_string[1], 0, 5 );
 
 				// If version number does not match the current version number found in wpbooklist.php, call the Compat class and run upgrade functions.
-				if ( COMMENTS_VERSION_NUM !== $version ) {
+				if ( WPBOOKLIST_COMMENTS_VERSION_NUM !== $version ) {
 					require_once COMMENTS_CLASS_COMPAT_DIR . 'class-comments-compat-functions.php';
 					$compat_class = new Comments_Compat_Functions();
 				}
@@ -151,7 +164,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_comments_frontend_js() {
 
-			wp_register_script( 'wpbooklist_comments_frontendjs', COMMENTS_JS_URL . 'wpbooklist_comments_frontend.min.js', array( 'jquery' ), COMMENTS_VERSION_NUM, true );
+			wp_register_script( 'wpbooklist_comments_frontendjs', COMMENTS_JS_URL . 'wpbooklist_comments_frontend.min.js', array( 'jquery' ), WPBOOKLIST_COMMENTS_VERSION_NUM, true );
 
 			// Next 4-5 lines are required to allow translations of strings that would otherwise live in the wpbooklist-admin-js.js JavaScript File.
 			require_once COMMENTS_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-comments-translations.php';
@@ -181,7 +194,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_comments_admin_style() {
 
-			wp_register_style( 'wpbooklist_comments_adminui', COMMENTS_CSS_URL . 'wpbooklist-comments-main-admin.css', null, COMMENTS_VERSION_NUM );
+			wp_register_style( 'wpbooklist_comments_adminui', COMMENTS_CSS_URL . 'wpbooklist-comments-main-admin.css', null, WPBOOKLIST_COMMENTS_VERSION_NUM );
 			wp_enqueue_style( 'wpbooklist_comments_adminui' );
 
 		}
@@ -191,7 +204,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_comments_frontend_style() {
 
-			wp_register_style( 'wpbooklist_comments_frontendui', COMMENTS_CSS_URL . 'wpbooklist-comments-main-frontend.css', null, COMMENTS_VERSION_NUM );
+			wp_register_style( 'wpbooklist_comments_frontendui', COMMENTS_CSS_URL . 'wpbooklist-comments-main-frontend.css', null, WPBOOKLIST_COMMENTS_VERSION_NUM );
 			wp_enqueue_style( 'wpbooklist_comments_frontendui' );
 
 		}

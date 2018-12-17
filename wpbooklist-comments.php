@@ -58,14 +58,54 @@ global $wpdb;
 
 /* CONSTANT DEFINITIONS */
 
-	// Extension version number.
-	define( 'COMMENTS_VERSION_NUM', '6.0.0' );
+	// Root plugin folder directory.
+	if ( ! defined('WPBOOKLIST_VERSION_NUM' ) ) {
+		define( 'WPBOOKLIST_VERSION_NUM', '6.1.2' );
+	}
+
+	// This Extension's Version Number.
+	define( 'WPBOOKLIST_COMMENTS_VERSION_NUM', '6.1.2' );
 
 	// Root plugin folder directory.
 	define( 'COMMENTS_ROOT_DIR', plugin_dir_path( __FILE__ ) );
 
 	// Root WordPress Plugin Directory.
 	define( 'COMMENTS_ROOT_WP_PLUGINS_DIR', str_replace( '/wpbooklist-comments', '', plugin_dir_path( __FILE__ ) ) );
+
+	// Root WPBL Dir.
+	if ( ! defined('ROOT_WPBL_DIR' ) ) {
+		define( 'ROOT_WPBL_DIR', COMMENTS_ROOT_WP_PLUGINS_DIR . 'wpbooklist/' );
+	}
+
+	// Root WPBL Url.
+	if ( ! defined('ROOT_WPBL_URL' ) ) {
+		define( 'ROOT_WPBL_URL', plugins_url() . '/wpbooklist/' );
+	}
+
+	// Root WPBL Classes Dir.
+	if ( ! defined('ROOT_WPBL_CLASSES_DIR' ) ) {
+		define( 'ROOT_WPBL_CLASSES_DIR', ROOT_WPBL_DIR . 'includes/classes/' );
+	}
+
+	// Root WPBL Transients Dir.
+	if ( ! defined('ROOT_WPBL_TRANSIENTS_DIR' ) ) {
+		define( 'ROOT_WPBL_TRANSIENTS_DIR', ROOT_WPBL_CLASSES_DIR . 'transients/' );
+	}
+
+	// Root WPBL Translations Dir.
+	if ( ! defined('ROOT_WPBL_TRANSLATIONS_DIR' ) ) {
+		define( 'ROOT_WPBL_TRANSLATIONS_DIR', ROOT_WPBL_CLASSES_DIR . 'translations/' );
+	}
+
+	// Root WPBL Root Img Icons Dir.
+	if ( ! defined('ROOT_WPBL_IMG_ICONS_URL' ) ) {
+		define( 'ROOT_WPBL_IMG_ICONS_URL', ROOT_WPBL_URL . 'assets/img/icons/' );
+	}
+
+	// Root WPBL Root Utilities Dir.
+	if ( ! defined('ROOT_WPBL_UTILITIES_DIR' ) ) {
+		define( 'ROOT_WPBL_UTILITIES_DIR', ROOT_WPBL_CLASSES_DIR . 'utilities/' );
+	}
 
 	// Root WPBL Dir.
 	if ( ! defined('ROOT_WPBL_DIR' ) ) {
@@ -211,6 +251,9 @@ global $wpdb;
 
 	// Function to run any code that is needed to modify the plugin between different versions.
 	add_action( 'admin_footer', array( $comments_general_functions, 'wpbooklist_comments_admin_pointers_javascript' ) );
+
+	// Verifies that the core WPBookList plugin is installed and activated - otherwise, the Extension doesn't load and a message is displayed to the user.
+	register_activation_hook( __FILE__, array( $comments_general_functions, 'wpbooklist_comments_core_plugin_required' ) );
 
 	// Creates tables upon activation.
 	register_activation_hook( __FILE__, array( $comments_general_functions, 'wpbooklist_comments_create_tables' ) );
