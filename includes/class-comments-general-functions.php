@@ -28,10 +28,6 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 			$this->trans = new WPBookList_Comments_Translations();
 			$this->trans->trans_strings();
 
-			// Require the Transients file.
-			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
-			$this->transients = new WPBookList_Transients();
-
 		}
 
 		/**
@@ -292,6 +288,10 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 			global $wpdb;
 			$comments_table = $wpdb->prefix . 'wpbooklist_comments';
+
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
 
 			$transient_name   = 'wpbl_' . md5( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_comments' . ' WHERE bookuid = ' . $comments_array[2] );
 			$transient_exists = $this->transients->existing_transient_check( $transient_name );

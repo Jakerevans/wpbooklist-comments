@@ -23,15 +23,6 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		 */
 		public function __construct() {
 
-			// Require the Transients file.
-			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
-			$this->transients = new WPBookList_Transients();
-
-			// Set the date.
-			require_once ROOT_WPBL_UTILITIES_DIR . 'class-wpbooklist-utilities-date.php';
-			$utilities_date = new WPBookList_Utilities_Date();
-			$this->date     = $utilities_date->wpbooklist_get_date_via_current_time( 'mysql' );
-
 			// Get Translations.
 			require_once COMMENTS_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-comments-translations.php';
 			$this->trans = new WPBookList_Comments_Translations();
@@ -190,6 +181,10 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 
 			global $wpdb;
 
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
+
 			check_ajax_referer( 'wpbooklist_comments_like_action_callback', 'security' );
 
 			if ( isset( $_POST['commentid'] ) ) {
@@ -261,6 +256,15 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		public function wpbooklist_comments_register_action_callback() {
 
 			global $wpdb;
+
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
+
+			// Set the date.
+			require_once ROOT_WPBL_UTILITIES_DIR . 'class-wpbooklist-utilities-date.php';
+			$utilities_date = new WPBookList_Utilities_Date();
+			$this->date     = $utilities_date->wpbooklist_get_date_via_current_time( 'mysql' );
 
 			check_ajax_referer( 'wpbooklist_comments_register_action_callback', 'security' );
 
@@ -366,6 +370,15 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		public function wpbooklist_comments_submit_action_callback() {
 
 			global $wpdb;
+
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
+
+			// Set the date.
+			require_once ROOT_WPBL_UTILITIES_DIR . 'class-wpbooklist-utilities-date.php';
+			$utilities_date = new WPBookList_Utilities_Date();
+			$this->date     = $utilities_date->wpbooklist_get_date_via_current_time( 'mysql' );
 
 			check_ajax_referer( 'wpbooklist_comments_submit_action_callback', 'security' );
 
@@ -547,6 +560,10 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 
 			global $wpdb;
 
+			// Require the Transients file.
+			require_once ROOT_WPBL_TRANSIENTS_DIR . 'class-wpbooklist-transients.php';
+			$this->transients = new WPBookList_Transients();
+
 			check_ajax_referer( 'wpbooklist_comments_delete_action_callback', 'security' );
 
 			if ( isset( $_POST['commentid'] ) ) {
@@ -573,6 +590,11 @@ if ( ! class_exists( 'Comments_Ajax_Functions', false ) ) :
 		public function wpbooklist_comments_maniparchived_action_callback() {
 
 			global $wpdb;
+
+			// Set the date.
+			require_once ROOT_WPBL_UTILITIES_DIR . 'class-wpbooklist-utilities-date.php';
+			$utilities_date = new WPBookList_Utilities_Date();
+			$this->date     = $utilities_date->wpbooklist_get_date_via_current_time( 'mysql' );
 
 			check_ajax_referer( 'wpbooklist_comments_maniparchived_action_callback', 'security' );
 
