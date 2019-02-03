@@ -423,7 +423,7 @@ if ( ! class_exists( 'Comments_General_Functions', false ) ) :
 
 				// Round the Avergae Rating up to the next 0.5.
 				$whole_number = (int) $average_rating;
-				$decimal      = $average_rating - $whole_number;
+				$decimal      = (int) $average_rating - $whole_number;
 				if ( 0 === $decimal ) {
 					$average_rating = $whole_number;
 				} elseif ( .5 >= $decimal ) {

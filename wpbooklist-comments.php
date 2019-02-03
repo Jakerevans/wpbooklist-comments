@@ -11,7 +11,7 @@
  * Plugin Name: WPBookList Comments Extension
  * Plugin URI: https://www.jakerevans.com
  * Description: A WPBookList Extension that allows your visitors to leave Ratings and COMMENTS on your WPBookList Books!
- * Version: 6.0.0
+ * Version: 1.0.1
  * Author: Jake Evans
  * Text Domain: wpbooklist
  * Author URI: https://www.jakerevans.com
@@ -60,11 +60,11 @@ global $wpdb;
 
 	// Root plugin folder directory.
 	if ( ! defined('WPBOOKLIST_VERSION_NUM' ) ) {
-		define( 'WPBOOKLIST_VERSION_NUM', '6.1.2' );
+		define( 'WPBOOKLIST_VERSION_NUM', '6.1.6' );
 	}
 
 	// This Extension's Version Number.
-	define( 'WPBOOKLIST_COMMENTS_VERSION_NUM', '6.1.2' );
+	define( 'WPBOOKLIST_COMMENTS_VERSION_NUM', '1.0.1' );
 
 	// Root plugin folder directory.
 	define( 'COMMENTS_ROOT_DIR', plugin_dir_path( __FILE__ ) );
